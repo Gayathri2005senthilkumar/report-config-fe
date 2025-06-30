@@ -1,11 +1,11 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import MainLayout from "./layout/MainLayout";
+import DashboardLayout from "./layout/DashboardLayout";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<MainLayout />}>
+        <Route path="/" element={<DashboardLayout />}>
           {/* Your nested routes go here */}
         </Route>
       </Routes>
