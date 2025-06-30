@@ -6,7 +6,7 @@ function Sidebar() {
   const navigate = useNavigate();
 
   return (
-    <div className="w-64 bg-gray-200 p-4 shadow-md h-full">
+    <div className="w-64 bg-gray-200 p-4 shadow-md">
       <h2 className="text-xl font-bold mb-6 text-black">adminJS</h2>
       <p className="text-sm font-medium text-gray-600 mb-4">NAVIGATION</p>
 

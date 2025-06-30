@@ -5,16 +5,15 @@ import { Outlet } from "react-router-dom";
 function MainLayout() {
   return (
     <div className="flex flex-col h-screen">
-      {/* Header at top */}
+      {/* Top Header */}
       <Header />
 
-      {/* Content Area */}
+      {/* Main body: Sidebar + Main Content */}
       <div className="flex flex-1">
-        {/* Sidebar on left */}
         <Sidebar />
 
-        {/* Main Content on right */}
-        <main className="flex-1 p-6 bg-gray-50 overflow-y-auto">
+        {/* Main Content Area */}
+        <main className="flex-1 p-6 overflow-y-auto bg-gray-50">
           <Outlet />
         </main>
       </div>
