@@ -1,17 +1,15 @@
-import Header from "./layout/Header";
-import Sidebar from "./layout/Sidebar";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import MainLayout from "./layout/MainLayout";
-
 
 function App() {
   return (
-    <div className="h-screen flex flex-col">
-      <Header />
-      <div className="flex flex-1">
-        <Sidebar />
-        <MainLayout />
-      </div>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<MainLayout />}>
+          {/* Your nested routes go here */}
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
 

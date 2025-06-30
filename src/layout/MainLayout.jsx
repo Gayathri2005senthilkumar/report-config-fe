@@ -1,9 +1,24 @@
+import Sidebar from "./Sidebar";
+import Header from "./Header";
+import { Outlet } from "react-router-dom";
+
 function MainLayout() {
   return (
-    <main className="w-3/4 p-4">
-      <h2 className="text-2xl font-semibold mb-2">Welcome, Gayathri 👋</h2>
-      <p>This is your main layout content.</p>
-    </main>
+    <div className="flex flex-col h-screen">
+      {/* Header */}
+      <Header />
+
+      {/* Content area with sidebar + main */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Sidebar */}
+        <Sidebar />
+
+        {/* Main content */}
+        <main className="flex-1 overflow-y-auto p-6 bg-gray-50">
+          <Outlet />
+        </main>
+      </div>
+    </div>
   );
 }
 
