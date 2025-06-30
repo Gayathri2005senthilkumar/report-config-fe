@@ -1,8 +1,6 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 function Sidebar() {
-  const [showSubmenu, setShowSubmenu] = useState(false);
   const navigate = useNavigate();
 
   return (
@@ -11,34 +9,11 @@ function Sidebar() {
       <p className="text-sm font-medium text-gray-600 mb-4">NAVIGATION</p>
 
       <div className="space-y-2">
-        <button
-          onClick={() => setShowSubmenu(!showSubmenu)}
-          className="w-full flex items-center justify-between bg-white text-black p-2 rounded hover:bg-violet-100 transition"
-        >
-          <span>Report Management</span>
-          <span>{showSubmenu ? "▲" : "▼"}</span>
-        </button>
-
-        {showSubmenu && (
-          <div className="ml-4 mt-2 space-y-1">
-            <SidebarButton label="Report Types" path="/report-types" navigate={navigate} />
-            <SidebarButton label="Report Configs" path="/weekly-report" navigate={navigate} />
-            <SidebarButton label="Column Mappings" path="/monthly-report" navigate={navigate} />
-          </div>
-        )}
+        <button className="w-full bg-white text-black p-2 rounded" onClick={() => navigate("/report-types")}>Report Types</button>
+        <button className="w-full bg-white text-black p-2 rounded" onClick={() => navigate("/weekly-report")}>Report Configs</button>
+        <button className="w-full bg-white text-black p-2 rounded" onClick={() => navigate("/monthly-report")}>Column Mappings</button>
       </div>
     </div>
-  );
-}
-
-function SidebarButton({ label, path, navigate }) {
-  return (
-    <button
-      className="w-full bg-white text-black p-2 rounded hover:bg-violet-100 transition"
-      onClick={() => navigate(path)}
-    >
-      {label}
-    </button>
   );
 }
 
