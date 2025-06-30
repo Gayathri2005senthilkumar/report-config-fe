@@ -1,6 +1,7 @@
 import Header from "./layout/Header";
 import Sidebar from "./layout/Sidebar";
-import Main from "./layout/Main";
+import MainLayout from "./layout/MainLayout";
+
 
 function App() {
   return (
@@ -8,7 +9,7 @@ function App() {
       <Header />
       <div className="flex flex-1">
         <Sidebar />
-        <Main />
+        <MainLayout />
       </div>
     </div>
   );
