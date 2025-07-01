@@ -1,54 +1,27 @@
-// ReportTable.jsx
-import React, { useState } from "react";
-import reportData from "./lib/report-data"; 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Checkbox
-} from "@mui/material";
+import React from "react";
+import { useNavigate } from "react-router-dom";
 
-function ReportTable() {
-  const [data, setData] = useState(reportData);
-
-  const handleToggle = (index) => {
-    const updatedData = [...data];
-    updatedData[index].enabled = !updatedData[index].enabled;
-    setData(updatedData);
-  };
+function ReportTypes() {
+  const navigate = useNavigate();
 
   return (
-    <TableContainer component={Paper} sx={{ marginTop: 4 }}>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell><strong>ID</strong></TableCell>
-            <TableCell><strong>Name</strong></TableCell>
-            <TableCell align="center"><strong>Enable</strong></TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {data.map((row, index) => (
-            <TableRow key={row.id}>
-              <TableCell>{row.id}</TableCell>
-              <TableCell>{row.name}</TableCell>
-              <TableCell align="center">
-                <Checkbox
-                  checked={row.enabled}
-                  onChange={() => handleToggle(index)}
-                  color="primary"
-                />
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <div className="p-6">
+      <h2 className="text-xl font-bold mb-4 text-gray-800">Report Types</h2>
+      <div className="flex gap-4">
+        <button
+          className="border border-violet-500 bg-white text-black font-bold px-6 py-3 rounded hover:bg-violet-100"
+          onClick={() => navigate("/report-types/list")}
+        >
+          List
+        </button>
+        <button className="border border-violet-500 bg-white text-black font-bold px-6 py-3 rounded hover:bg-violet-100"
+        onClick={() => navigate("/report-types/Show")}
+        >
+          Show
+        </button>
+      </div>
+    </div>
   );
 }
 
-export default ReportTable;
+export default ReportTypes;

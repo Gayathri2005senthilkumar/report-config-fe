@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import reportData from "../../Table/report-data";
+import reportData from "./report-data";
+
 import {
   Table,
   TableBody,
@@ -11,23 +12,26 @@ import {
   Checkbox,
 } from "@mui/material";
 
-function ReportTable() {
+function ReportTable({ showActions = false, onEdit, onDelete }) {
   const [data, setData] = useState(reportData);
 
   const handleToggle = (index) => {
-    const updatedData = [...data];
-    updatedData[index].enabled = !updatedData[index].enabled;
-    setData(updatedData);
+    const updated = [...data];
+    updated[index].enabled = !updated[index].enabled;
+    setData(updated);
   };
 
   return (
-    <TableContainer component={Paper} sx={{ maxWidth: 800, margin: "auto", marginTop: 4 }}>
+    <TableContainer component={Paper} sx={{ marginTop: 4 }}>
       <Table>
         <TableHead>
           <TableRow>
             <TableCell><strong>ID</strong></TableCell>
             <TableCell><strong>Name</strong></TableCell>
             <TableCell align="center"><strong>Enable</strong></TableCell>
+            {showActions && (
+              <TableCell align="center"><strong>Actions</strong></TableCell>
+            )}
           </TableRow>
         </TableHead>
         <TableBody>
@@ -42,6 +46,22 @@ function ReportTable() {
                   color="primary"
                 />
               </TableCell>
+              {showActions && (
+                <TableCell align="center" className="space-x-2">
+                  <button
+                    onClick={() => onEdit?.(row.id)}
+                    className="px-3 py-1 text-sm font-semibold border border-violet-500 bg-white text-violet-700 rounded hover:bg-violet-100"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => onDelete?.(row.id)}
+                    className="px-3 py-1 text-sm font-semibold border border-violet-500 bg-white text-violet-700 rounded hover:bg-violet-100"
+                  >
+                    Delete
+                  </button>
+                </TableCell>
+              )}
             </TableRow>
           ))}
         </TableBody>
