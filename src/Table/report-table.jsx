@@ -1,7 +1,5 @@
 import React, { useState } from "react";
-import reportData from "./report-data";
-
-
+import reportData from "../../Table/report-data";
 import {
   Table,
   TableBody,
@@ -10,7 +8,7 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Checkbox
+  Checkbox,
 } from "@mui/material";
 
 function ReportTable() {

@@ -1,5 +1,5 @@
 import React from "react";
-import ReportTable from "../../Tabel/report-table";
+import ReportTable from "../../Table/report-table";
 
 function List() {
   return (
