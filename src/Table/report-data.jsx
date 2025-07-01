@@ -1,7 +1,25 @@
 const reportData = [
-  { id: 1, name: "Hub Traffic", enabled: true },
-  { id: 2, name: "User Report", enabled: false },
-  { id: 3, name: "Revenue Report", enabled: true },
+  {
+    id: 1,
+    name: "Hub Traffic",
+    enabled: true,
+    createdAt: "2024-06-01",
+    updatedAt: "2024-06-10",
+  },
+  {
+    id: 2,
+    name: "User Report",
+    enabled: false,
+    createdAt: "2024-06-05",
+    updatedAt: "2024-06-09",
+  },
+  {
+    id: 3,
+    name: "Revenue Report",
+    enabled: true,
+    createdAt: "2024-06-07",
+    updatedAt: "2024-06-08",
+  },
 ];
 
 export default reportData;

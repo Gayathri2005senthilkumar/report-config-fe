@@ -17,7 +17,7 @@ function Show() {
   };
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
+    <div className="p-6 max-w-7xl mx-auto">
       <h2 className="text-2xl font-bold mb-6 text-gray-800">Report Types / Show</h2>
 
       <div className="overflow-x-auto rounded shadow">
@@ -27,13 +27,15 @@ function Show() {
               <th className="py-3 px-4 text-left">ID</th>
               <th className="py-3 px-4 text-left">Name</th>
               <th className="py-3 px-4 text-center">Enable</th>
+              <th className="py-3 px-4 text-center">Created At</th>
+              <th className="py-3 px-4 text-center">Updated At</th>
               <th className="py-3 px-4 text-center">Actions</th>
             </tr>
           </thead>
           <tbody>
             {data.length === 0 ? (
               <tr>
-                <td colSpan="4" className="text-center py-6 text-gray-500">
+                <td colSpan="6" className="text-center py-6 text-gray-500">
                   No reports available.
                 </td>
               </tr>
@@ -46,6 +48,8 @@ function Show() {
                   <td className="py-3 px-4">{report.id}</td>
                   <td className="py-3 px-4">{report.name}</td>
                   <td className="py-3 px-4 text-center">{report.enabled ? "Yes" : "No"}</td>
+                  <td className="py-3 px-4 text-center">{report.createdAt}</td>
+                  <td className="py-3 px-4 text-center">{report.updatedAt}</td>
                   <td className="py-3 px-4 text-center space-x-2">
                     <button
                       onClick={() => navigate(`/report-types/edit/${report.id}`)}

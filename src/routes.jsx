@@ -27,10 +27,10 @@ const router = createBrowserRouter([
         path: '/report-types/Show',
         element: <Show/>,
       },
-       {
-        path: '/edit/:id',  // ✅ Dynamic route for Edit
-        element: <Edit />,
-       }
+      {
+         path: '/report-types/edit/:id',
+         element: <Edit />,
+      }
     ]
   }
 ]);
