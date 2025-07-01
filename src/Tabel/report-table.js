@@ -1,6 +1,5 @@
-// ReportTable.jsx
 import React, { useState } from "react";
-import reportData from "./lib/report-data"; 
+import reportData from "../../lib/report-data";
 import {
   Table,
   TableBody,
@@ -22,7 +21,7 @@ function ReportTable() {
   };
 
   return (
-    <TableContainer component={Paper} sx={{ marginTop: 4 }}>
+    <TableContainer component={Paper} sx={{ maxWidth: 800, margin: "auto", marginTop: 4 }}>
       <Table>
         <TableHead>
           <TableRow>
