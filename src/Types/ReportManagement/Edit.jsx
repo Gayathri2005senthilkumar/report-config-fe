@@ -1,4 +1,3 @@
-// src/Types/ReportManagement/Edit.jsx
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import reportData from "../../Table/report-data";
