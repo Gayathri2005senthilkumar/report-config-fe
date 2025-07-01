@@ -1,5 +1,7 @@
 import React, { useState } from "react";
-import reportData from "../../lib/report-data";
+import reportData from "./report-data";
+
+
 import {
   Table,
   TableBody,
