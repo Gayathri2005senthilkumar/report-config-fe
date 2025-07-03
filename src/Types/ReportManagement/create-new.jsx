@@ -12,10 +12,12 @@ function CreateNew() {
       id: reportData.length + 1,
       name,
       enabled,
+      createdAt: new Date().toISOString().slice(0, 10),
+      updatedAt: new Date().toISOString().slice(0, 10),
     };
 
     reportData.push(newReport);
-    navigate("/report-types/list");
+    navigate("/report-types/show"); 
   };
 
   return (
@@ -25,7 +27,6 @@ function CreateNew() {
           Create New Report
         </h2>
 
-        {/* Name Field */}
         <div className="mb-5">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Report Name
@@ -39,7 +40,6 @@ function CreateNew() {
           />
         </div>
 
-        {/* Enable Field */}
         <div className="mb-6">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Enable
@@ -54,7 +54,6 @@ function CreateNew() {
           </select>
         </div>
 
-        {/* Save Button */}
         <button
           onClick={handleSave}
           className="w-full bg-violet-600 hover:bg-violet-700 text-white font-semibold py-3 rounded-lg transition-colors"

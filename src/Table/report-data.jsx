@@ -1,4 +1,4 @@
-const reportData = [
+let reportData = [
   {
     id: 1,
     name: "Hub Traffic",
@@ -21,5 +21,13 @@ const reportData = [
     updatedAt: "2024-06-08",
   },
 ];
+
+export function getReports() {
+  return reportData;
+}
+
+export function addReport(newReport) {
+  reportData.push(newReport);
+}
 
 export default reportData;

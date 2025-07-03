@@ -1,13 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import {
-  Home,
   FileText,
   MessageSquare,
   Search,
   Filter,
   List,
-  Map
+  Map,
 } from "lucide-react";
 
 function Sidebar() {
@@ -15,13 +14,12 @@ function Sidebar() {
   const [showReportSubmenu, setShowReportSubmenu] = useState(false);
 
   const menuItems = [
-    { label: "Dashboard", icon: <Home />, path: "/dashboard" },
     {
       label: "Report Management",
       icon: <FileText />,
       path: null,
       submenu: [
-        { label: "Report Types", icon: <List />, path: "/report-types"},
+        { label: "Report Types", icon: <List />, path: "/report-types" },
         { label: "Report Configs", icon: <FileText />, path: "/weekly-report" },
         { label: "Column Mappings", icon: <Map />, path: "/column-types" },
       ],
@@ -32,7 +30,7 @@ function Sidebar() {
   ];
 
   return (
-    <div className="w-64 bg-gray-800 text-white h-screen p-4 flex flex-col items-center">
+    <div className="w-64 bg-gray-800 text-white h-screen p-4 flex flex-col items-center overflow-y-auto">
       <div className="space-y-2 w-full">
         {menuItems.map((item, index) => (
           <div key={index} className="w-full">
@@ -44,23 +42,25 @@ function Sidebar() {
                   navigate(item.path);
                 }
               }}
-              className="w-full h-20 bg-gray-700 hover:bg-gray-600 text-white flex flex-col items-center justify-center rounded"
+              className="w-full h-16 bg-gray-700 hover:bg-gray-600 text-white flex flex-col items-center justify-center rounded transition"
             >
               <div className="mb-1">{item.icon}</div>
               <span className="text-xs">{item.label}</span>
             </button>
 
-            {/* Dropdown submenu buttons with same size */}
+            {/* Submenu: visually distinct */}
             {item.submenu && showReportSubmenu && (
-              <div className="mt-2 space-y-2">
+              <div className="mt-1 space-y-1 pl-4 border-l-2 border-violet-500">
                 {item.submenu.map((subItem, subIndex) => (
                   <button
                     key={subIndex}
                     onClick={() => navigate(subItem.path)}
-                    className="w-full h-20 bg-gray-600 hover:bg-gray-500 text-white flex flex-col items-center justify-center rounded"
+                    className="w-full h-14 bg-gray-600 hover:bg-violet-600 text-white flex flex-col items-start justify-center rounded px-4 transition"
                   >
-                    <div className="mb-1 text-sm">{subItem.icon}</div>
-                    <span className="text-xs">{subItem.label}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm">{subItem.icon}</span>
+                      <span className="text-sm">{subItem.label}</span>
+                    </div>
                   </button>
                 ))}
               </div>
