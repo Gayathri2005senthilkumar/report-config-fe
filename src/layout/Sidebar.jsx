@@ -23,7 +23,7 @@ function Sidebar() {
       submenu: [
         { label: "Report Types", icon: <List />, path: "/report-types"},
         { label: "Report Configs", icon: <FileText />, path: "/weekly-report" },
-        { label: "Column Mappings", icon: <Map />, path: "/monthly-report" },
+        { label: "Column Mappings", icon: <Map />, path: "/column-types" },
       ],
     },
     { label: "Response Fields", icon: <MessageSquare />, path: "/response-fields" },

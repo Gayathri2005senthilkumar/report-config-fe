@@ -5,6 +5,10 @@ import List from './Types/ReportManagement/List';
 import CreateNew from './Types/ReportManagement/create-new';
 import Show from './Types/ReportManagement/Show';
 import Edit from './Types/ReportManagement/Edit';
+import ColumnTypes from './Ty-Mapping/column-type';
+import ColumnShow from './Ty-Mapping/column-show';
+import ColumnEdit from './Ty-Mapping/column-edit';
+import ColumnCreate from './Ty-Mapping/column-create';
  
 const router = createBrowserRouter([
   {
@@ -30,6 +34,21 @@ const router = createBrowserRouter([
       {
          path: '/report-types/edit/:id',
          element: <Edit />,
+      },
+      {
+        path:'/column-types',
+        element: <ColumnTypes/>,
+      },
+      {
+        path: '/column-type/column-show',
+        element: <ColumnShow/>
+      },
+      { path: "column-edit", 
+        element: <ColumnEdit/>
+      },
+      {
+        path: "column-type/column-create",
+        element: <ColumnCreate/>
       }
     ]
   }
