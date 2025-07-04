@@ -20,7 +20,7 @@ function Sidebar() {
       path: null,
       submenu: [
         { label: "Report Types", icon: <List />, path: "/report-types" },
-        { label: "Report Configs", icon: <FileText />, path: "/weekly-report" },
+        { label: "Report Configs", icon: <FileText />, path: "/config-type" },
         { label: "Column Mappings", icon: <Map />, path: "/column-types" },
       ],
     },

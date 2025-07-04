@@ -8,6 +8,10 @@ import ColumnTypes from './Ty-Mapping/column-type';
 import ColumnShow from './Ty-Mapping/column-show';
 import ColumnEdit from './Ty-Mapping/column-edit';
 import ColumnCreate from './Ty-Mapping/column-create';
+import ConfigType from './Re-conif/config-type';
+import ConfigShow from './Re-conif/config-show';
+import ConfigEdit from './Re-conif/config-edit';
+import ConfigCreate from './Re-conif/config-create';
  
 const router = createBrowserRouter([
   {
@@ -44,7 +48,26 @@ const router = createBrowserRouter([
       {
         path: "column-type/column-create",
         element: <ColumnCreate/>
-      }
+      },
+      {
+        path: '/config-type',
+        element: <ConfigType/>,
+      },
+      {
+        path: '/config-type/config-show',
+        element: <ConfigShow />,
+      },
+        {
+          path: '/config-type/config-edit/:id', 
+          element: <ConfigEdit/>,
+        },
+        {
+        path: '/config-type/config-create',
+        element: <ConfigCreate/>
+       }
+
+
+
     ]
   }
 ]);
