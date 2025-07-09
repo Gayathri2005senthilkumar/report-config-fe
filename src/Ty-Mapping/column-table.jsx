@@ -1,3 +1,5 @@
+// src/Ty-Mapping/column-table.jsx
+
 import React from "react";
 import {
   Table, TableBody, TableCell, TableContainer,
@@ -20,7 +22,8 @@ function ColumnTable({ rows }) {
   };
 
   const handleEdit = (row) => {
-    navigate("/column-edit", { state: row });
+    // ✅ Navigate with ID in URL to match your route
+    navigate(`/column-type/column-edit/${row.id}`);
   };
 
   return (
@@ -55,7 +58,7 @@ function ColumnTable({ rows }) {
                 <Button
                   variant="outlined"
                   color="primary"
-                  onClick={() => handleEdit(row)}
+                  onClick={() => handleEdit(row)} // ✅ updated here
                   size="small"
                   sx={{ marginRight: 1 }}
                 >

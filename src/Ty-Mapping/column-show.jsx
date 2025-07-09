@@ -25,10 +25,10 @@ function ColumnShow() {
       console.error("Delete failed:", err);
     }
   };
-
-  const handleEdit = (id) => {
-  navigate(`/column-type/column-edit/${id}`);
+const handleEdit = (row) => {
+  navigate(`/column-type/column-edit/${row.id}`);
 };
+
 
   const handleCreate = () => {
     navigate("/column-type/column-create"); 

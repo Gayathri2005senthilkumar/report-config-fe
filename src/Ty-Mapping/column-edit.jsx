@@ -1,68 +1,102 @@
+// src/Ty-Mapping/column-edit.jsx
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { updateColumn, fetchColumns } from "./column-data";
+import { fetchColumns, updateColumn } from "./column-data";
 
 function ColumnEdit() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [form, setForm] = useState(null);
+  const [form, setForm] = useState({
+    id: "",         // ✅ include id here (readonly)
+    label: "",
+    value: "",
+    type: "",
+    enable: false,
+  });
 
   useEffect(() => {
-    // Fetch all and find this column OR ideally fetch one item if backend allows
-    fetchColumns().then((all) => {
-      const found = all.find((col) => col.id == id);
-      setForm(found);
-    });
+    async function fetchData() {
+      try {
+        const allData = await fetchColumns();
+        const current = allData.find((item) => item.id === id);
+        if (current) {
+          setForm(current); // ✅ fill entire form including ID
+        } else {
+          console.error("Item not found for ID:", id);
+        }
+      } catch (error) {
+        console.error("Failed to fetch item:", error);
+      }
+    }
+    fetchData();
   }, [id]);
 
-  const save = async () => {
-    await updateColumn({ ...form, id });
-    navigate("/column-type/column-show");
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
   };
 
-  if (!form) return <p>Loading...</p>;
+  const handleSave = async () => {
+    try {
+      await updateColumn(form); // ✅ send updated object
+      navigate("/column-type/column-show"); // ✅ go back to list
+    } catch (error) {
+      console.error("Update failed:", error);
+    }
+  };
 
   return (
-    <div className="p-6 max-w-md mx-auto bg-white rounded shadow">
-      <h2 className="text-xl font-semibold mb-4">Edit Column</h2>
+    <div className="p-6 max-w-md mx-auto">
+      <h2 className="text-xl font-bold mb-4">Edit Column</h2>
 
-      <input
-        className="border w-full p-2 mb-4"
-        value={form.label}
-        onChange={(e) => setForm({ ...form, label: e.target.value })}
-        placeholder="Label"
-      />
-      <input
-        className="border w-full p-2 mb-4"
-        value={form.value}
-        onChange={(e) => setForm({ ...form, value: e.target.value })}
-        placeholder="Value"
-      />
-      <select
-        className="border w-full p-2 mb-4"
-        value={form.type}
-        onChange={(e) => setForm({ ...form, type: e.target.value })}
-      >
-        <option value="">-- Select Type --</option>
-        <option value="string">String</option>
-        <option value="number">Number</option>
-        <option value="boolean">Boolean</option>
-      </select>
-      <label className="flex items-center mb-4">
+      <div className="flex flex-col gap-3">
         <input
-          type="checkbox"
-          checked={form.enable}
-          onChange={(e) => setForm({ ...form, enable: e.target.checked })}
+          name="id"
+          value={form.id}
+          readOnly
+          className="border p-2 bg-gray-100 text-gray-500"
         />
-        <span className="ml-2">Enable</span>
-      </label>
+        <input
+          name="label"
+          value={form.label}
+          onChange={handleChange}
+          placeholder="Label"
+          className="border p-2"
+        />
+        <input
+          name="value"
+          value={form.value}
+          onChange={handleChange}
+          placeholder="Value"
+          className="border p-2"
+        />
+        <input
+          name="type"
+          value={form.type}
+          onChange={handleChange}
+          placeholder="Type"
+          className="border p-2"
+        />
+        <label className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            name="enable"
+            checked={form.enable}
+            onChange={handleChange}
+          />
+          Enable
+        </label>
 
-      <button
-        onClick={save}
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-      >
-        Save Changes
-      </button>
+        <button
+          onClick={handleSave}
+          className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+        >
+          Save
+        </button>
+      </div>
     </div>
   );
 }
