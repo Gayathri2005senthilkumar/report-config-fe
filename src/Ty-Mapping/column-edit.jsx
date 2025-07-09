@@ -1,100 +1,69 @@
-import React, { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import {
-  TextField,
-  FormControlLabel,
-  Checkbox,
-  Button,
-  Paper,
-  Typography,
-  Box,
-} from "@mui/material";
-
-import { updateColumn } from "./column-data";
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { updateColumn, fetchColumns } from "./column-data";
 
 function ColumnEdit() {
-  const location = useLocation();
+  const { id } = useParams();
   const navigate = useNavigate();
-  const row = location.state;
+  const [form, setForm] = useState(null);
 
-  const [formData, setFormData] = useState({
-    id: row.id, // kept for internal use, but not shown
-    label: row.label,
-    value: row.value,
-    type: row.type,
-    enable: row.enable,
-  });
+  useEffect(() => {
+    // Fetch all and find this column OR ideally fetch one item if backend allows
+    fetchColumns().then((all) => {
+      const found = all.find((col) => col.id == id);
+      setForm(found);
+    });
+  }, [id]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleCheckboxChange = (e) => {
-    setFormData((prev) => ({ ...prev, enable: e.target.checked }));
-  };
-
-  const handleSave = () => {
-    updateColumn(formData);
+  const save = async () => {
+    await updateColumn({ ...form, id });
     navigate("/column-type/column-show");
   };
 
+  if (!form) return <p>Loading...</p>;
+
   return (
-    <Paper elevation={3} sx={{ p: 4, maxWidth: 500, margin: "auto", mt: 5 }}>
-      <Typography variant="h5" gutterBottom>
-        Edit Column
-      </Typography>
+    <div className="p-6 max-w-md mx-auto bg-white rounded shadow">
+      <h2 className="text-xl font-semibold mb-4">Edit Column</h2>
 
-      {/* ID is used internally but not shown */}
-
-      <TextField
-        label="Label"
-        name="label"
-        value={formData.label}
-        onChange={handleChange}
-        fullWidth
-        margin="normal"
+      <input
+        className="border w-full p-2 mb-4"
+        value={form.label}
+        onChange={(e) => setForm({ ...form, label: e.target.value })}
+        placeholder="Label"
       />
-
-      <TextField
-        label="Value"
-        name="value"
-        value={formData.value}
-        onChange={handleChange}
-        fullWidth
-        margin="normal"
+      <input
+        className="border w-full p-2 mb-4"
+        value={form.value}
+        onChange={(e) => setForm({ ...form, value: e.target.value })}
+        placeholder="Value"
       />
+      <select
+        className="border w-full p-2 mb-4"
+        value={form.type}
+        onChange={(e) => setForm({ ...form, type: e.target.value })}
+      >
+        <option value="">-- Select Type --</option>
+        <option value="string">String</option>
+        <option value="number">Number</option>
+        <option value="boolean">Boolean</option>
+      </select>
+      <label className="flex items-center mb-4">
+        <input
+          type="checkbox"
+          checked={form.enable}
+          onChange={(e) => setForm({ ...form, enable: e.target.checked })}
+        />
+        <span className="ml-2">Enable</span>
+      </label>
 
-      <TextField
-        label="Type"
-        name="type"
-        value={formData.type}
-        onChange={handleChange}
-        fullWidth
-        margin="normal"
-      />
-
-      <FormControlLabel
-        control={
-          <Checkbox
-            checked={formData.enable}
-            onChange={handleCheckboxChange}
-            color="primary"
-          />
-        }
-        label="Enable"
-        sx={{ mt: 2 }}
-      />
-
-      <Box mt={3} display="flex" justifyContent="flex-end" gap={2}>
-        <Button variant="contained" color="primary" onClick={handleSave}>
-          Save
-        </Button>
-        <Button variant="outlined" onClick={() => navigate(-1)}>
-          Cancel
-        </Button>
-      </Box>
-    </Paper>
+      <button
+        onClick={save}
+        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+      >
+        Save Changes
+      </button>
+    </div>
   );
 }
 

@@ -1,73 +1,72 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ColumnTable from "./column-table";
-import { getColumns } from "./column-data";
+import { fetchColumns, deleteColumn } from "./column-data";
 
 function ColumnShow() {
   const navigate = useNavigate();
-  const [filter, setFilter] = useState("all");
+  const [data, setData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [filter, setFilter] = useState("all");
 
-  const allRows = getColumns();
+  useEffect(() => {
+    fetchColumns()
+      .then(setData) 
+      .catch((err) => {
+        console.error("Failed to fetch column data:", err);
+      });
+  }, []);
 
-  // First apply filter (enabled/disabled/all)
-  let filteredRows = allRows.filter((row) => {
-    if (filter === "enabled") return row.enable === true;
-    if (filter === "disabled") return row.enable === false;
-    return true;
-  });
+  const handleDelete = async (id) => {
+    try {
+      await deleteColumn(id);
+      setData((prev) => prev.filter((r) => r.id !== id));
+    } catch (err) {
+      console.error("Delete failed:", err);
+    }
+  };
 
-  // Then apply global search
-  filteredRows = filteredRows.filter((row) => {
-    const search = searchTerm.toLowerCase();
-    return (
-      row.label.toLowerCase().includes(search) ||
-      row.value.toLowerCase().includes(search) ||
-      row.type.toLowerCase().includes(search)
+  const handleEdit = (id) => {
+  navigate(`/column-type/column-edit/${id}`);
+};
+
+  const handleCreate = () => {
+    navigate("/column-type/column-create"); 
+  };
+
+  const filtered = data
+    .filter((r) => {
+      if (filter === "enabled") return r.enable;
+      if (filter === "disabled") return !r.enable;
+      return true;
+    })
+    .filter((r) =>
+      [r.label, r.value, r.type].some((str) =>
+        str?.toLowerCase().includes(searchTerm.toLowerCase())
+      )
     );
-  });
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h2 className="text-xl font-bold mb-4 text-gray-800">
-        Column Mapping / Show
-      </h2>
-
-      {/* Top controls: search, filter, create new */}
-      <div className="flex flex-wrap justify-between items-center gap-4 mb-4">
-        {/* Search bar */}
+    <div className="p-6">
+      <div className="flex gap-3 mb-4">
         <input
-          type="text"
-          placeholder="Search by label, value, or type"
-          className="border border-gray-300 px-4 py-2 rounded w-full md:w-1/3"
+          placeholder="Search..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-
-        <div className="flex gap-3">
-          {/* Filter Dropdown */}
-          <select
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            className="border border-violet-500 text-violet-600 font-semibold px-4 py-2 rounded hover:bg-violet-100"
-          >
-            <option value="all">Filter</option>
-            <option value="enabled">Enabled</option>
-            <option value="disabled">Disabled</option>
-          </select>
-
-          {/* Create New Button */}
-          <button
-            className="border border-violet-500 bg-white text-violet-600 font-semibold px-6 py-2 rounded hover:bg-violet-100"
-            onClick={() => navigate("/column-type/column-create")}
-          >
-            Create New
-          </button>
-        </div>
+        <select value={filter} onChange={(e) => setFilter(e.target.value)}>
+          <option value="all">All</option>
+          <option value="enabled">Enabled</option>
+          <option value="disabled">Disabled</option>
+        </select>
+        <button onClick={handleCreate}>Create New</button>
       </div>
 
-      {/* Table */}
-      <ColumnTable rows={filteredRows} />
+      <ColumnTable
+        rows={filtered}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
     </div>
   );
 }

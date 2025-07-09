@@ -42,11 +42,13 @@ const router = createBrowserRouter([
         path: '/column-type/column-show',
         element: <ColumnShow/>
       },
-      { path: "column-edit", 
-        element: <ColumnEdit/>
-      },
       {
-        path: "column-type/column-create",
+  path: "/column-type/column-edit/:id", 
+  element: <ColumnEdit/>
+},
+
+      {
+        path: "/column-type/column-create",
         element: <ColumnCreate/>
       },
       {
