@@ -27,60 +27,69 @@ function ColumnCreate() {
   };
 
   return (
-    <div className="p-6 max-w-md mx-auto bg-white rounded shadow">
-      <h2 className="text-xl font-semibold mb-4">Create New Column</h2>
+    <div className="max-w-xl mx-auto p-6 bg-white rounded-2xl shadow-lg mt-10">
+      <h2 className="text-2xl font-bold text-gray-800 mb-6">Create New Column</h2>
 
-      <div className="mb-4">
-        <label className="block mb-1">Label</label>
-        <input
-          className="border w-full p-2"
-          name="label"
-          value={form.label}
-          onChange={(e) => setForm({ ...form, label: e.target.value })}
-        />
+      <div className="space-y-5">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Label</label>
+          <input
+            type="text"
+            name="label"
+            value={form.label}
+            onChange={(e) => setForm({ ...form, label: e.target.value })}
+            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-violet-500"
+            placeholder="Enter label name"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Value</label>
+          <input
+            type="text"
+            name="value"
+            value={form.value}
+            onChange={(e) => setForm({ ...form, value: e.target.value })}
+            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-violet-500"
+            placeholder="Enter column value"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
+          <select
+            name="type"
+            value={form.type}
+            onChange={(e) => setForm({ ...form, type: e.target.value })}
+            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-violet-500"
+          >
+            <option value="">-- Select Type --</option>
+            <option value="string">String</option>
+            <option value="number">Number</option>
+            <option value="boolean">Boolean</option>
+          </select>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            id="enable"
+            checked={form.enable}
+            onChange={(e) => setForm({ ...form, enable: e.target.checked })}
+            className="h-4 w-4 text-violet-600 focus:ring-violet-500"
+          />
+          <label htmlFor="enable" className="text-gray-700">Enable</label>
+        </div>
+
+        <div className="text-right">
+          <button
+            onClick={save}
+            className="bg-violet-600 text-white px-6 py-2 rounded-lg hover:bg-violet-700 transition-all shadow-sm"
+          >
+            Save
+          </button>
+        </div>
       </div>
-
-      <div className="mb-4">
-        <label className="block mb-1">Value</label>
-        <input
-          className="border w-full p-2"
-          name="value"
-          value={form.value}
-          onChange={(e) => setForm({ ...form, value: e.target.value })}
-        />
-      </div>
-
-      <div className="mb-4">
-        <label className="block mb-1">Type</label>
-        <select
-          className="border w-full p-2"
-          name="type"
-          value={form.type}
-          onChange={(e) => setForm({ ...form, type: e.target.value })}
-        >
-          <option value="">-- Select Type --</option>
-          <option value="string">String</option>
-          <option value="number">Number</option>
-          <option value="boolean">Boolean</option>
-        </select>
-      </div>
-
-      <div className="mb-4 flex items-center">
-        <input
-          type="checkbox"
-          id="enable"
-          checked={form.enable}
-          onChange={(e) => setForm({ ...form, enable: e.target.checked })}
-        />
-        <label htmlFor="enable" className="ml-2">Enable</label>
-      </div>
-
-      <button
-        onClick={save}
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-      >
-        Save
-      </button>
     </div>
   );
 }

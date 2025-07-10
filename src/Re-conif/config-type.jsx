@@ -1,22 +1,15 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 function ConfigType() {
   const navigate = useNavigate();
 
-  return (
-    <div className="p-6">
-      <h2 className="text-xl font-bold mb-4 text-gray-800">Report Config</h2>
-      <div className="flex gap-4">
-        <button
-          className="border border-violet-500 bg-white text-black font-bold px-6 py-3 rounded hover:bg-violet-100"
-          onClick={() => navigate("/config-type/config-show")}  // ✅ Corrected path
-        >
-          Show
-        </button>
-      </div>
-    </div>
-  );
+  useEffect(() => {
+    // Automatically navigate to config-show when this component loads
+    navigate("/config-type/config-show");
+  }, [navigate]);
+
+  return null; // Since we redirect, no UI is needed
 }
 
 export default ConfigType;

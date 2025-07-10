@@ -1,23 +1,20 @@
 const API_BASE = "/api/v1/report-config/column-mapping";
 
-// ✅ GET all columns
+// GET all columns
 export async function fetchColumns() {
   const res = await fetch(API_BASE);
   if (!res.ok) throw new Error("Fetch failed");
 
   const json = await res.json();
-  console.log("API JSON response:", JSON.stringify(json, null, 2));
-
-  // Handle expected format: { data: { results: [...] } }
   if (Array.isArray(json.data?.results)) {
     return json.data.results;
   }
 
-  console.error("❌ Unexpected API response format:", json);
+  console.error("Unexpected API response format:", json);
   throw new Error("Invalid API response structure");
 }
 
-// ✅ POST a new column
+//  CREATE a column
 export async function addColumn(newItem) {
   const res = await fetch(API_BASE, {
     method: "POST",
@@ -27,31 +24,34 @@ export async function addColumn(newItem) {
 
   if (!res.ok) {
     const errorText = await res.text();
-    console.error("❌ Create failed. Server response:", errorText);
+    console.error("Create failed:", errorText);
     throw new Error("Create failed");
   }
 
   return res.json();
 }
 
-// ✅ PUT (update) a column
+// UPDATE column using same POST API with id
 export async function updateColumn(updatedItem) {
-  const res = await fetch(`${API_BASE}/${updatedItem.id}`, {
-    method: "PUT",
+  console.log("📦 Updating Column with ID:", updatedItem.id);
+  console.log("Payload:", updatedItem);
+
+  const res = await fetch(API_BASE, {
+    method: "POST", // Same as create
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(updatedItem),
+    body: JSON.stringify(updatedItem), // id included here
   });
 
   if (!res.ok) {
     const errorText = await res.text();
-    console.error("❌ Update failed. Server response:", errorText);
+    console.error("Update failed. Server response:", errorText);
     throw new Error("Update failed");
   }
 
   return res.json();
 }
 
-// ✅ DELETE a column
+// DELETE
 export async function deleteColumn(id) {
   const res = await fetch(`${API_BASE}/${id}`, {
     method: "DELETE",
@@ -59,7 +59,7 @@ export async function deleteColumn(id) {
 
   if (!res.ok) {
     const errorText = await res.text();
-    console.error("❌ Delete failed. Server response:", errorText);
+    console.error(" Delete failed:", errorText);
     throw new Error("Delete failed");
   }
 }
