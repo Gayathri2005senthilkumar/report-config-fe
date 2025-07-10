@@ -22,7 +22,7 @@ function ColumnTable({ rows }) {
   };
 
   const handleEdit = (row) => {
-    // ✅ Navigate with ID in URL to match your route
+    //  Navigate with ID in URL to match your route
     navigate(`/column-type/column-edit/${row.id}`);
   };
 
@@ -58,7 +58,7 @@ function ColumnTable({ rows }) {
                 <Button
                   variant="outlined"
                   color="primary"
-                  onClick={() => handleEdit(row)} // ✅ updated here
+                  onClick={() => handleEdit(row)} // updated here
                   size="small"
                   sx={{ marginRight: 1 }}
                 >
