@@ -1,10 +1,31 @@
+// src/Ty-Mapping/column-table.jsx
+
 import React from "react";
 import {
   Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, Paper, Checkbox, Button,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
-function ColumnTable({ rows, onEdit, onDelete }) {
+function ColumnTable({ rows }) {
+  const navigate = useNavigate();
+
+  const handleToggle = (row) => {
+    row.enable = !row.enable;
+  };
+
+  const handleDelete = (id) => {
+    const index = rows.findIndex((item) => item.id === id);
+    if (index !== -1) {
+      rows.splice(index, 1);
+    }
+  };
+
+  const handleEdit = (row) => {
+    // ✅ Navigate with ID in URL to match your route
+    navigate(`/column-type/column-edit/${row.id}`);
+  };
+
   return (
     <TableContainer component={Paper}>
       <Table>
@@ -29,7 +50,7 @@ function ColumnTable({ rows, onEdit, onDelete }) {
               <TableCell>
                 <Checkbox
                   checked={row.enable}
-                  disabled
+                  onChange={() => handleToggle(row)}
                   color="primary"
                 />
               </TableCell>
@@ -37,7 +58,7 @@ function ColumnTable({ rows, onEdit, onDelete }) {
                 <Button
                   variant="outlined"
                   color="primary"
-                  onClick={() => onEdit(row)}
+                  onClick={() => handleEdit(row)} // ✅ updated here
                   size="small"
                   sx={{ marginRight: 1 }}
                 >
@@ -46,7 +67,7 @@ function ColumnTable({ rows, onEdit, onDelete }) {
                 <Button
                   variant="outlined"
                   color="error"
-                  onClick={() => onDelete(row.id)}
+                  onClick={() => handleDelete(row.id)}
                   size="small"
                 >
                   Delete
