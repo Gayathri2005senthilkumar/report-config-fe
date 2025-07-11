@@ -6,10 +6,11 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '/api': {
+      // Proxy for /v1 endpoints
+      '/v1': {
         target: 'https://smshub.openturf.dev/smshub_dev',
         changeOrigin: true,
-        rewrite: path => path.replace(/^\/api/, ''),
+        secure: false,
       },
     },
   },

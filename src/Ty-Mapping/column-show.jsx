@@ -9,48 +9,50 @@ function ColumnShow() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
 
-  //  Fetch data on component mount
+  // ✅ Fetch columns on mount and sort by ID (ascending)
   useEffect(() => {
-    fetchColumns()
-      .then((res) => {
-        // Accept either array or { data: { results: [...] } }
-        setData(Array.isArray(res) ? res : res?.data?.results ?? []);
-      })
-      .catch((err) => {
-        console.error("Failed to fetch column data:", err);
-      });
+    const loadColumns = async () => {
+      try {
+        const res = await fetchColumns();
+        const sorted = Array.isArray(res) ? res.sort((a, b) => a.id - b.id) : [];
+        setData(sorted);
+      } catch (err) {
+        console.error("❌ Failed to fetch column data:", err);
+      }
+    };
+    loadColumns();
   }, []);
 
-  //  Delete column
+  // ✅ Delete column by ID
   const handleDelete = async (id) => {
     try {
       await deleteColumn(id);
-      setData((prev) => prev.filter((r) => r.id !== id));
+      setData((prev) => prev.filter((row) => row.id !== id));
     } catch (err) {
-      console.error("Delete failed:", err);
+      console.error("❌ Delete failed:", err);
     }
   };
 
-  //  Navigate to edit page
+  // ✅ Navigate to edit page
   const handleEdit = (row) => {
     navigate(`/column-type/column-edit/${row.id}`);
   };
 
-  // Navigate to create page
+  // ✅ Navigate to create page
   const handleCreate = () => {
     navigate("/column-type/column-create");
   };
 
-  // Apply filter and search
+  // ✅ Apply filter and search
   const filtered = data
-    .filter((r) => {
-      if (filter === "enabled") return r.enable;
-      if (filter === "disabled") return !r.enable;
+    .filter((row) => {
+      if (filter === "enabled") return row.enable === true;
+      if (filter === "disabled") return row.enable === false;
       return true;
     })
-    .filter((r) =>
-      [r.label, r.value, r.type].some((str) =>
-        str?.toLowerCase().includes(searchTerm.toLowerCase())
+    .filter((row) =>
+      [row.label, row.value, row.type].some((field) =>
+        field?.toLowerCase().includes(searchTerm.toLowerCase())
       )
     );
 
