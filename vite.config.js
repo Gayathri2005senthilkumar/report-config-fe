@@ -1,17 +1,12 @@
 // vite.config.js
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-
-export default defineConfig({
-  plugins: [react()],
+export default {
   server: {
     proxy: {
-      // Proxy for /v1 endpoints
       '/v1': {
         target: 'https://smshub.openturf.dev/smshub_dev',
         changeOrigin: true,
-        secure: false,
+        rewrite: (path) => path.replace(/^\/v1/, '/v1'),
       },
     },
   },
-});
+};

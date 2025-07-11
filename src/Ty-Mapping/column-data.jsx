@@ -1,56 +1,62 @@
 import axios from "axios";
+import getAPIMap from "../ApiUrls"; // If you placed ApiUrls.js directly under src
 
-// Relative API path (works with Vite proxy)
-const API_BASE = "/v1/report-config/column-mapping";
-
-// Get all columns
+// Fetch all columns
 export async function fetchColumns() {
   try {
-    const res = await axios.get(API_BASE);
-    const json = res.data;
-
-    if (Array.isArray(json.data?.results)) {
-      return json.data.results;
-    }
-
-    console.error("Unexpected API response format:", json);
-    throw new Error("Invalid API response structure");
+    const response = await axios.get(getAPIMap("columnMapping"));
+    return response.data;
   } catch (error) {
-    console.error("Fetch failed:", error);
-    throw new Error("Fetch failed");
+    console.error("❌ Fetch failed:", error);
+    throw error;
   }
 }
 
-// Create new column
-export async function addColumn(newItem) {
+// Add a new column
+export async function addColumn(data) {
   try {
-    const res = await axios.post(API_BASE, newItem);
-    return res.data;
+    // Only send required fields
+    const cleanData = {
+      label: data.label,
+      value: data.value,
+      type: data.type,
+      enable: data.enable,
+    };
+
+    const response = await axios.post(getAPIMap("columnMapping"), cleanData);
+    return response.data;
   } catch (error) {
-    console.error("Create failed:", error.response?.data || error.message);
-    throw new Error("Create failed");
+    console.error("❌ Add failed:", error);
+    throw error;
   }
 }
 
-// Update column (POST with ID in body)
-export async function updateColumn(updatedItem) {
+// Update existing column
+export async function updateColumn(data) {
   try {
-    console.log("📦 Updating Column:", updatedItem);
-    const res = await axios.post(API_BASE, updatedItem);
-    return res.data;
+    const cleanData = {
+      id: data.id,
+      label: data.label,
+      value: data.value,
+      type: data.type,
+      enable: data.enable,
+    };
+
+    const response = await axios.post(getAPIMap("columnMapping"), cleanData);
+    return response.data;
   } catch (error) {
-    console.error("Update failed:", error.response?.data || error.message);
-    throw new Error("Update failed");
+    console.error("❌ Update failed:", error);
+    throw error;
   }
 }
 
-// Delete column by ID
+// Delete a column by ID
 export async function deleteColumn(id) {
   try {
-    const res = await axios.delete(`${API_BASE}/${id}`);
-    return res.data;
+    const response = await axios.delete(`${getAPIMap("columnMapping")}/${id}`);
+    return response.data;
   } catch (error) {
-    console.error("Delete failed:", error.response?.data || error.message);
-    throw new Error("Delete failed");
+    console.error("❌ Delete failed:", error);
+    throw error;
   }
 }

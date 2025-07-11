@@ -9,41 +9,42 @@ function ColumnShow() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
 
-  // ✅ Fetch columns on mount and sort by ID (ascending)
+  // Fetch columns on mount
   useEffect(() => {
     const loadColumns = async () => {
       try {
         const res = await fetchColumns();
-        const sorted = Array.isArray(res) ? res.sort((a, b) => a.id - b.id) : [];
+        // ✅ Sort by ID ascending before setting
+        const sorted = [...res].sort((a, b) => a.id - b.id);
         setData(sorted);
       } catch (err) {
-        console.error("❌ Failed to fetch column data:", err);
+        console.error(" Failed to fetch column data:", err);
       }
     };
     loadColumns();
   }, []);
 
-  // ✅ Delete column by ID
+  // Delete column by ID
   const handleDelete = async (id) => {
     try {
       await deleteColumn(id);
       setData((prev) => prev.filter((row) => row.id !== id));
     } catch (err) {
-      console.error("❌ Delete failed:", err);
+      console.error(" Delete failed:", err);
     }
   };
 
-  // ✅ Navigate to edit page
+  // Navigate to edit page
   const handleEdit = (row) => {
     navigate(`/column-type/column-edit/${row.id}`);
   };
 
-  // ✅ Navigate to create page
+  // Navigate to create page
   const handleCreate = () => {
     navigate("/column-type/column-create");
   };
 
-  // ✅ Apply filter and search
+  // Filter and search logic
   const filtered = data
     .filter((row) => {
       if (filter === "enabled") return row.enable === true;

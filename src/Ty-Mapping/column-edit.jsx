@@ -13,6 +13,7 @@ function ColumnEdit() {
     enable: false,
   });
 
+  // Fetch data for the current column
   useEffect(() => {
     async function fetchData() {
       try {
@@ -24,12 +25,13 @@ function ColumnEdit() {
           console.error("Item not found for ID:", id);
         }
       } catch (error) {
-        console.error(" Failed to fetch item:", error);
+        console.error("❌ Failed to fetch item:", error);
       }
     }
     fetchData();
   }, [id]);
 
+  // Update form values on change
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setForm((prev) => ({
@@ -38,14 +40,21 @@ function ColumnEdit() {
     }));
   };
 
+  // Save updated data
   const handleSave = async () => {
     try {
-      await updateColumn(form); // Sends to POST API with id
-      alert(" Updated successfully!");
-      navigate("/column-type/column-show"); // Go back to table
+      await updateColumn({
+        id: form.id,
+        label: form.label,
+        value: form.value,
+        type: form.type,
+        enable: form.enable,
+      });
+      alert("✅ Updated successfully!");
+      navigate("/column-type/column-show");
     } catch (error) {
-      console.error(" Update failed:", error);
-      alert(" Update failed. Check console for details.");
+      console.error("❌ Update failed:", error);
+      alert("Update failed. Check console for details.");
     }
   };
 
