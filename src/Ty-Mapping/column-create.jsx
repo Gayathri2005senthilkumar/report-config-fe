@@ -1,9 +1,10 @@
+// src/Ty-Mapping/column-create.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { addColumn } from "./column-data";
 
 function ColumnCreate() {
-  const nav = useNavigate();
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     label: "",
     value: "",
@@ -18,11 +19,13 @@ function ColumnCreate() {
     }
 
     try {
+      console.log("📝 Submitting column form:", form);
       await addColumn(form);
-      nav("/column-type/column-show");
+      alert("✅ Column created successfully!");
+      navigate("/column-type/column-show");
     } catch (err) {
-      console.error("Failed to create column:", err);
-      alert("Failed to create column. Check console for details.");
+      console.error("❌ Failed to create column:", err.response?.data || err.message);
+      alert("❌ Failed to create column. Check console for more details.");
     }
   };
 
@@ -38,7 +41,7 @@ function ColumnCreate() {
             name="label"
             value={form.label}
             onChange={(e) => setForm({ ...form, label: e.target.value })}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-violet-500"
+            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-violet-500"
             placeholder="Enter label name"
           />
         </div>
@@ -50,7 +53,7 @@ function ColumnCreate() {
             name="value"
             value={form.value}
             onChange={(e) => setForm({ ...form, value: e.target.value })}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-violet-500"
+            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-violet-500"
             placeholder="Enter column value"
           />
         </div>
@@ -61,7 +64,7 @@ function ColumnCreate() {
             name="type"
             value={form.type}
             onChange={(e) => setForm({ ...form, type: e.target.value })}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-violet-500"
+            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-violet-500"
           >
             <option value="">-- Select Type --</option>
             <option value="string">String</option>
@@ -76,7 +79,7 @@ function ColumnCreate() {
             id="enable"
             checked={form.enable}
             onChange={(e) => setForm({ ...form, enable: e.target.checked })}
-            className="h-4 w-4 text-violet-600 focus:ring-violet-500"
+            className="h-4 w-4 text-violet-600"
           />
           <label htmlFor="enable" className="text-gray-700">Enable</label>
         </div>
@@ -84,7 +87,7 @@ function ColumnCreate() {
         <div className="text-right">
           <button
             onClick={save}
-            className="bg-violet-600 text-white px-6 py-2 rounded-lg hover:bg-violet-700 transition-all shadow-sm"
+            className="bg-violet-600 text-white px-6 py-2 rounded-lg hover:bg-violet-700 transition-all"
           >
             Save
           </button>

@@ -1,21 +1,21 @@
+// src/Ty-Mapping/column-data.jsx
 import axios from "axios";
-import getAPIMap from "../ApiUrls"; // If you placed ApiUrls.js directly under src
+import getAPIMap from "../ApiUrls";
 
-// Fetch all columns
+// ✅ Fetch all columns
 export async function fetchColumns() {
   try {
     const response = await axios.get(getAPIMap("columnMapping"));
     return response.data;
   } catch (error) {
-    console.error("❌ Fetch failed:", error);
+    console.error("❌ Fetch failed:", error.response?.data || error.message);
     throw error;
   }
 }
 
-// Add a new column
+// ✅ Add new column
 export async function addColumn(data) {
   try {
-    // Only send required fields
     const cleanData = {
       label: data.label,
       value: data.value,
@@ -23,15 +23,16 @@ export async function addColumn(data) {
       enable: data.enable,
     };
 
+    console.log("📤 Sending column data:", cleanData);
     const response = await axios.post(getAPIMap("columnMapping"), cleanData);
     return response.data;
   } catch (error) {
-    console.error("❌ Add failed:", error);
+    console.error("❌ Add failed:", error.response?.data || error.message);
     throw error;
   }
 }
 
-// Update existing column
+// ✅ Update column
 export async function updateColumn(data) {
   try {
     const cleanData = {
@@ -42,21 +43,22 @@ export async function updateColumn(data) {
       enable: data.enable,
     };
 
+    console.log("📤 Updating column:", cleanData);
     const response = await axios.post(getAPIMap("columnMapping"), cleanData);
     return response.data;
   } catch (error) {
-    console.error("❌ Update failed:", error);
+    console.error("❌ Update failed:", error.response?.data || error.message);
     throw error;
   }
 }
 
-// Delete a column by ID
+// ✅ Delete column
 export async function deleteColumn(id) {
   try {
     const response = await axios.delete(`${getAPIMap("columnMapping")}/${id}`);
     return response.data;
   } catch (error) {
-    console.error("❌ Delete failed:", error);
+    console.error("❌ Delete failed:", error.response?.data || error.message);
     throw error;
   }
 }
