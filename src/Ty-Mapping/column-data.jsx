@@ -1,6 +1,7 @@
 // src/Ty-Mapping/column-data.jsx
 import axios from "axios";
-import getAPIMap from "../ApiUrls";
+import api from "../api/api";
+import getAPIMap from "../api/ApiUrls";
 
 // ✅ Fetch all columns
 export async function fetchColumns() {
@@ -16,15 +17,7 @@ export async function fetchColumns() {
 // ✅ Add new column
 export async function addColumn(data) {
   try {
-    const cleanData = {
-      label: data.label,
-      value: data.value,
-      type: data.type,
-      enable: data.enable,
-    };
-
-    console.log("📤 Sending column data:", cleanData);
-    const response = await axios.post(getAPIMap("columnMapping"), cleanData);
+    const response = await api.post(getAPIMap("columnMapping"), data);
     return response.data;
   } catch (error) {
     console.error("❌ Add failed:", error.response?.data || error.message);
