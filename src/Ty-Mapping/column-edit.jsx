@@ -1,107 +1,97 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import FormInput from "../components/hookForms/FormInput";
 import FormSelect from "../components/hookForms/FormSelect";
 import FormCheckbox from "../components/hookForms/FormCheckbox";
-import apiFunction from "../api/apiFunction";
+import { updateColumn } from "./column-data";
+
+const options = [
+  { label: "Text", value: "text" },
+  { label: "Number", value: "number" },
+  { label: "Date", value: "date" },
+];
 
 function ColumnEdit() {
-  const { id } = useParams();
   const navigate = useNavigate();
-  const location = useLocation();
-  const columnData = location.state || {}; // row data from navigate state
+  const { state: row } = useLocation(); // row = column data from navigation
 
   const {
     handleSubmit,
     control,
-    reset,
     formState: { errors },
   } = useForm({
     defaultValues: {
-      label: "",
-      value: "",
-      type: "",
-      enable: false,
+      label: row?.label || "",
+      value: row?.value || "",
+      type: row?.type || "",
+      enable: row?.enable || false,
     },
   });
 
-  // Prefill the form with passed data
-  useEffect(() => {
-    if (columnData) {
-      reset({
-        label: columnData.label || "",
-        value: columnData.value || "",
-        type: columnData.type || "",
-        enable: columnData.enable || false,
-      });
-    }
-  }, [columnData, reset]);
-
   const onSubmit = async (formData) => {
     try {
-      await apiFunction({
-        method: "PUT",
-        url: `/api/v1/column-mapping/${id}`, // ✅ Make sure this endpoint exists
-        data: formData,
-      });
-      alert("Column updated successfully!");
+      const payload = {
+        id: row.id,
+        ...formData,
+      };
+      await updateColumn(payload);
+      alert("Column updated successfully");
       navigate("/column-type/column-show", { state: { updated: true } });
     } catch (error) {
       console.error("Update failed:", error);
-      alert("Update failed.");
+      alert("Failed to update column");
     }
   };
 
   return (
-    <div className="p-6 max-w-xl mx-auto">
-      <h2 className="text-xl font-semibold mb-4">Edit Column Mapping</h2>
+    <div className="max-w-xl mx-auto p-6 bg-white rounded shadow">
+      <h2 className="text-2xl font-semibold mb-4">Edit Column</h2>
+
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <FormInput
           name="label"
           control={control}
           label="Label"
-          error={errors.label?.message}
-          rules={{ required: "Label is required" }}
+          error={errors.label}
         />
 
         <FormInput
           name="value"
           control={control}
           label="Value"
-          error={errors.value?.message}
-          rules={{ required: "Value is required" }}
+          error={errors.value}
         />
 
         <FormSelect
           name="type"
           control={control}
           label="Type"
-          options={["text", "number", "date"]}
-          error={errors.type?.message}
-          rules={{ required: "Type is required" }}
+          options={options}
+          error={errors.type}
         />
 
         <FormCheckbox
           name="enable"
           control={control}
           label="Enable"
-          error={errors.enable?.message}
+          error={errors.enable}
         />
 
-        <div className="flex justify-between">
-          <button
-            type="submit"
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-          >
-            Save
-          </button>
+        <div className="flex justify-end space-x-2 pt-4">
           <button
             type="button"
+            className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
             onClick={() => navigate("/column-type/column-show")}
-            className="border border-gray-400 text-gray-700 px-4 py-2 rounded hover:bg-gray-100"
           >
             Cancel
+          </button>
+
+          <button
+            type="submit"
+            className="px-4 py-2 bg-violet-600 text-white rounded hover:bg-violet-700"
+          >
+            Save Changes
           </button>
         </div>
       </form>

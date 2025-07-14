@@ -27,23 +27,28 @@ export async function addColumn(data) {
 }
 
 // ✅ Update column
+// ✅ Update column
 export async function updateColumn(data) {
   try {
     const cleanData = {
-      id: data.id,
       label: data.label,
       value: data.value,
       type: data.type,
       enable: data.enable,
     };
 
-    const response = await axios.post(getAPIMap("columnMapping"), cleanData);
+    const response = await axios.put(
+      `${getAPIMap("columnMapping")}/${data.id}`, // ✅ use PUT with ID
+      cleanData
+    );
+
     return response.data;
   } catch (error) {
     console.error("❌ Update failed:", error.response?.data || error.message);
     throw error;
   }
 }
+
 
 // ✅ Delete column
 export async function deleteColumn(id) {
