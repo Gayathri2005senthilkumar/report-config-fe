@@ -20,7 +20,7 @@ function ColumnTable({ rows = [], onDelete }) {
   };
 
   const handleEdit = (row) => {
-    navigate(`/column-type/column-edit/${row.id}`);
+    navigate(`/column-type/column-edit/${row.id}`, { state: row });
   };
 
   return (

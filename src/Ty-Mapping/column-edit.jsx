@@ -1,116 +1,110 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { fetchColumns, updateColumn } from "./column-data";
+import React, { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
+import FormInput from "../components/hookForms/FormInput";
+import FormSelect from "../components/hookForms/FormSelect";
+import FormCheckbox from "../components/hookForms/FormCheckbox";
+import apiFunction from "../api/apiFunction";
 
 function ColumnEdit() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [form, setForm] = useState({
-    id: "",
-    label: "",
-    value: "",
-    type: "",
-    enable: false,
+  const location = useLocation();
+  const columnData = location.state || {}; // row data from navigate state
+
+  const {
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      label: "",
+      value: "",
+      type: "",
+      enable: false,
+    },
   });
 
-  // Fetch data for the current column
+  // Prefill the form with passed data
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const allData = await fetchColumns();
-        const current = allData.find((item) => String(item.id) === id);
-        if (current) {
-          setForm(current);
-        } else {
-          console.error("Item not found for ID:", id);
-        }
-      } catch (error) {
-        console.error("❌ Failed to fetch item:", error);
-      }
-    }
-    fetchData();
-  }, [id]);
-
-  // Update form values on change
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
-
-  // Save updated data
-  const handleSave = async () => {
-    try {
-      await updateColumn({
-        id: form.id,
-        label: form.label,
-        value: form.value,
-        type: form.type,
-        enable: form.enable,
+    if (columnData) {
+      reset({
+        label: columnData.label || "",
+        value: columnData.value || "",
+        type: columnData.type || "",
+        enable: columnData.enable || false,
       });
-      alert("✅ Updated successfully!");
-      navigate("/column-type/column-show");
+    }
+  }, [columnData, reset]);
+
+  const onSubmit = async (formData) => {
+    try {
+      await apiFunction({
+        method: "PUT",
+        url: `/api/v1/column-mapping/${id}`, // ✅ Make sure this endpoint exists
+        data: formData,
+      });
+      alert("Column updated successfully!");
+      navigate("/column-type/column-show", { state: { updated: true } });
     } catch (error) {
-      console.error("❌ Update failed:", error);
-      alert("Update failed. Check console for details.");
+      console.error("Update failed:", error);
+      alert("Update failed.");
     }
   };
 
   return (
-    <div className="p-6 max-w-md mx-auto bg-white rounded shadow">
-      <h2 className="text-xl font-bold mb-4 text-gray-800">Edit Column</h2>
-
-      <div className="flex flex-col gap-3">
-        <input
-          name="id"
-          value={form.id}
-          readOnly
-          className="border p-2 bg-gray-100 text-gray-500"
-        />
-
-        <input
+    <div className="p-6 max-w-xl mx-auto">
+      <h2 className="text-xl font-semibold mb-4">Edit Column Mapping</h2>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <FormInput
           name="label"
-          value={form.label}
-          onChange={handleChange}
-          placeholder="Label"
-          className="border p-2 rounded"
+          control={control}
+          label="Label"
+          error={errors.label?.message}
+          rules={{ required: "Label is required" }}
         />
 
-        <input
+        <FormInput
           name="value"
-          value={form.value}
-          onChange={handleChange}
-          placeholder="Value"
-          className="border p-2 rounded"
+          control={control}
+          label="Value"
+          error={errors.value?.message}
+          rules={{ required: "Value is required" }}
         />
 
-        <input
+        <FormSelect
           name="type"
-          value={form.type}
-          onChange={handleChange}
-          placeholder="Type"
-          className="border p-2 rounded"
+          control={control}
+          label="Type"
+          options={["text", "number", "date"]}
+          error={errors.type?.message}
+          rules={{ required: "Type is required" }}
         />
 
-        <label className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            name="enable"
-            checked={form.enable}
-            onChange={handleChange}
-          />
-          Enable
-        </label>
+        <FormCheckbox
+          name="enable"
+          control={control}
+          label="Enable"
+          error={errors.enable?.message}
+        />
 
-        <button
-          onClick={handleSave}
-          className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
-        >
-          Save
-        </button>
-      </div>
+        <div className="flex justify-between">
+          <button
+            type="submit"
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          >
+            Save
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate("/column-type/column-show")}
+            className="border border-gray-400 text-gray-700 px-4 py-2 rounded hover:bg-gray-100"
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
     </div>
   );
 }
