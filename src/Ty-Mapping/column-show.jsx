@@ -1,22 +1,24 @@
 // src/Ty-Mapping/column-show.jsx
 
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import ColumnTable from "./column-table";
 import { fetchColumns, deleteColumn } from "./column-data";
 
 function ColumnShow() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const loadColumns = async () => {
     try {
       const res = await fetchColumns();
-      setRows(res?.data || []); // handle case if `res.data` is undefined
+      console.log("Fetched columns:", res);
+      setRows(res?.results || []); // ✅ FIXED HERE
     } catch (err) {
       console.error("Failed to fetch column data:", err);
-      setRows([]); // fallback empty
+      setRows([]);
     } finally {
       setLoading(false);
     }
@@ -27,7 +29,7 @@ function ColumnShow() {
 
     try {
       await deleteColumn(id);
-      setRows(rows.filter((item) => item.id !== id));
+      setRows((prev) => prev.filter((item) => item.id !== id));
     } catch (err) {
       console.error("Delete failed:", err);
       alert("Failed to delete column.");
@@ -36,7 +38,7 @@ function ColumnShow() {
 
   useEffect(() => {
     loadColumns();
-  }, []);
+  }, [location.state]); // refetch after create/update
 
   return (
     <div className="p-6">
@@ -44,7 +46,9 @@ function ColumnShow() {
         <h2 className="text-xl font-semibold">Column Mappings</h2>
         <button
           className="bg-violet-600 text-white px-4 py-2 rounded hover:bg-violet-700"
-          onClick={() => navigate("/column-type/column-create")}
+          onClick={() =>
+            navigate("/column-type/column-create", { state: { from: "show" } })
+          }
         >
           + Create New
         </button>

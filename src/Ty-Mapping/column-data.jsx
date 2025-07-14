@@ -7,7 +7,8 @@ import getAPIMap from "../api/ApiUrls";
 export async function fetchColumns() {
   try {
     const response = await axios.get(getAPIMap("columnMapping"));
-    return response.data;
+    console.log("Fetched columns:", response.data); // Debug log
+    return response.data.data || []; // Ensure we return the array
   } catch (error) {
     console.error("❌ Fetch failed:", error.response?.data || error.message);
     throw error;
@@ -36,7 +37,6 @@ export async function updateColumn(data) {
       enable: data.enable,
     };
 
-    console.log("📤 Updating column:", cleanData);
     const response = await axios.post(getAPIMap("columnMapping"), cleanData);
     return response.data;
   } catch (error) {

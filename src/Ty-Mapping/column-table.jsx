@@ -1,9 +1,14 @@
-// src/Ty-Mapping/column-table.jsx
-
 import React from "react";
 import {
-  Table, TableBody, TableCell, TableContainer,
-  TableHead, TableRow, Paper, Checkbox, Button
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Checkbox,
+  Button,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
@@ -11,7 +16,6 @@ function ColumnTable({ rows = [], onDelete }) {
   const navigate = useNavigate();
 
   const handleToggle = (row) => {
-    // You can integrate enable API here if needed
     row.enable = !row.enable;
   };
 
@@ -34,9 +38,9 @@ function ColumnTable({ rows = [], onDelete }) {
         </TableHead>
         <TableBody>
           {rows.length > 0 ? (
-            rows.map((row) => (
+            rows.map((row, index) => (
               <TableRow key={row.id}>
-                <TableCell>{row.id}</TableCell>
+                <TableCell>{index + 1}</TableCell>
                 <TableCell>{row.label}</TableCell>
                 <TableCell>{row.value}</TableCell>
                 <TableCell>{row.type}</TableCell>

@@ -1,7 +1,9 @@
-const APIMap = {
-  columnMapping: "/v1/report-config/column-mapping",
+const getAPIMap = (key) => {
+  const map = {
+    columnMapping: "/v1/report-config/column-mapping",
+    // add more API paths here if needed
+  };
+  return map[key];
 };
 
-export default function getAPIMap(key) {
-  return APIMap[key];
-}
+export default getAPIMap;
