@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 // You can store base URL in an env variable or config
-const BASE_URL = "";
+const BASE_URL = "https://smshub.openturf.dev/smshub_dev";
 
 const api = axios.create({
   baseURL: BASE_URL,

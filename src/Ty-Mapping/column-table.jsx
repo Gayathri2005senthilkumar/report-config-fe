@@ -19,9 +19,9 @@ function ColumnTable({ rows = [], onDelete }) {
     row.enable = !row.enable;
   };
 
- const handleEdit = (row) => {
-  navigate(`/column-type/column-edit/${row.id}`, { state: row });
-};
+  const handleEdit = (row) => {
+    navigate(`/column-type/column-edit/${row.id}`, { state: row });
+  };
 
   return (
     <TableContainer component={Paper}>

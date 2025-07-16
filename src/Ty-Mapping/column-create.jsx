@@ -1,4 +1,3 @@
-// src/Ty-Mapping/column-create.jsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -10,7 +9,8 @@ import FormSelect from "../Components/hookForms/FormSelect";
 import FormCheckbox from "../Components/hookForms/FormCheckbox";
 import SubmitButton from "../Components/Buttons/submitButton";
 
-import useMutationCustom from "../api/useMutationCustom";
+import { useMutation } from "@tanstack/react-query";
+import { addColumn } from "./column-data";
 
 const schema = yup.object().shape({
   label: yup.string().required("Label is required"),
@@ -43,89 +43,42 @@ function ColumnCreate() {
     resolver: yupResolver(schema),
   });
 
-  const { mutateAsync, isPending } = useMutationCustom({
+  const mutation = useMutation({
+    mutationFn: addColumn,
     onSuccess: () => {
       alert("✅ Column created successfully!");
       navigate("/column-type/column-show");
     },
     onError: (err) => {
-      if (
-        err?.response?.data?.message?.includes("SequelizeUniqueConstraintError")
-      ) {
-        alert("❌ This label or value already exists. Please enter a unique one.");
-      } else if (err?.response?.data?.message) {
-        alert("❌ Error: " + err.response.data.message);
-      } else {
-        alert("❌ Failed to create column. Check console for details.");
-      }
-      console.error("❌ Column creation failed:", err);
+      console.error("❌ Error:", err);
+      alert("❌ Failed to create column");
     },
   });
 
-const onSubmit = async (formData) => {
-  try {
-    const response = await mutateAsync({
-      url: "columnMapping",
-      method: "post",
-      data: {
-        label: formData.label,
-        value: formData.value,
-        type: formData.type,
-        enable: formData.enable,
-      },
-    });
-
-    console.log("✅ Column Created:", response.data);
-    alert("✅ Column created successfully!");
-    navigate("/column-type/column-show");
-
-  } catch (err) {
-    console.error("❌ Error from API:", err);
-
-    if (err?.response?.data?.message?.includes("SequelizeUniqueConstraintError")) {
-      alert("❌ This label or value already exists.");
-    } else if (err?.response?.data?.message) {
-      alert("❌ Error: " + err.response.data.message);
-    } else {
-      alert("❌ Failed to create column. Check console for details.");
-    }
-  }
-};
-
-
+  const onSubmit = (formData) => {
+    mutation.mutate(formData);
+  };
 
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
       className="max-w-xl mx-auto p-6 bg-white rounded-2xl shadow-lg mt-10"
     >
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">
-        Create New Column
-      </h2>
+      <h2 className="text-2xl font-bold text-gray-800 mb-6">Create New Column</h2>
 
       <div className="space-y-5">
         <div>
-          <label htmlFor="label" className="block text-sm font-medium text-gray-700 mb-1">Label</label>
-          <FormInput
-            name="label"
-            control={control}
-            error={errors.label?.message}
-            placeholder="Enter label name"
-          />
+          <label htmlFor="label">Label</label>
+          <FormInput name="label" control={control} error={errors.label?.message} />
         </div>
 
         <div>
-          <label htmlFor="value" className="block text-sm font-medium text-gray-700 mb-1">Value</label>
-          <FormInput
-            name="value"
-            control={control}
-            error={errors.value?.message}
-            placeholder="Enter column value"
-          />
+          <label htmlFor="value">Value</label>
+          <FormInput name="value" control={control} error={errors.value?.message} />
         </div>
 
         <div>
-          <label htmlFor="type" className="block text-sm font-medium text-gray-700 mb-1">Type</label>
+          <label htmlFor="type">Type</label>
           <FormSelect
             name="type"
             control={control}
@@ -140,7 +93,7 @@ const onSubmit = async (formData) => {
         </div>
 
         <div className="text-right">
-          <SubmitButton disabled={isPending} />
+          <SubmitButton disabled={mutation.isPending} />
         </div>
       </div>
     </form>
