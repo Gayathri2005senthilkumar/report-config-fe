@@ -33,8 +33,9 @@ export async function addColumn(data) {
 export async function fetchColumn(id) {
   const url = getAPIMap("columnMapping") + `/${id}`;
   const response = await axios.get(url);
-  return response.data;
+  return response.data?.data; // 👈 Fix here
 }
+
 
 // ✅ updateColumn function as per your format
 export async function updateColumn(options) {

@@ -1,100 +1,105 @@
-import React, { useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchColumn, updateColumn } from "./column-data";
+// src/Ty-Mapping/column-edit.jsx
+
+import React from "react";
 import {
-  TextField,
-  Button,
   Box,
+  Button,
   Checkbox,
   FormControlLabel,
-  Typography,
-  Paper,
+  TextField,
 } from "@mui/material";
+import { useForm } from "react-hook-form";
+import { useNavigate, useParams } from "react-router-dom";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import getAPIMap from "../api/ApiUrls";
+import apiFunction from "../api/apiFunction";
 
 function ColumnEdit() {
-  const { id } = useParams();
   const navigate = useNavigate();
+  const { id } = useParams();
   const queryClient = useQueryClient();
 
-  const { register, handleSubmit, reset, setValue, watch } = useForm();
-
-  // ✅ Fetch column data
-  const { data, isLoading } = useQuery({
-    queryKey: ["getColumn", id],
-    queryFn: () => fetchColumn(id),
-    enabled: !!id,
+  const { register, handleSubmit, reset } = useForm({
+    defaultValues: {
+      label: "",
+      value: "",
+      enable: false,
+    },
   });
 
-  // ✅ Prefill data when loaded
-  useEffect(() => {
-    if (data) {
-      reset({
-        label: data.label,
-        value: data.value,
-        enable: data.enable,
-      });
-    }
-  }, [data, reset]);
+  // Fetch existing column data
+  const { isLoading, isError } = useQuery({
+    queryKey: ["column", id],
+    queryFn: async () => {
+      const url = `${getAPIMap("columnMapping")}/${id}`;
+      const response = await apiFunction({ method: "get", url });
+      return response.data;
+    },
+    onSuccess: (data) => {
+      reset(data);
+    },
+  });
 
+  // Mutation to update column data
   const mutation = useMutation({
-    mutationFn: updateColumn,
+    mutationFn: (formData) => {
+      const url = `${getAPIMap("columnMapping")}/${id}`;
+      return apiFunction({
+        method: "put",
+        url,
+        data: formData,
+      });
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["getColumns"] });
-      navigate("/column-show");
+      queryClient.invalidateQueries(["columnMapping"]);
+      navigate("/column-mapping/show");
     },
   });
 
   const onSubmit = (formData) => {
-    mutation.mutate({
-      id,
-      label: formData.label,
-      value: formData.value,
-      enable: formData.enable,
-    });
+    mutation.mutate(formData);
   };
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Error loading column data.</div>;
 
   return (
-    <Paper elevation={3} sx={{ maxWidth: 500, mx: "auto", p: 3 }}>
-      <Typography variant="h6" gutterBottom>
-        Edit Column
-      </Typography>
+    <Box sx={{ maxWidth: 500, mx: "auto", mt: 8 }}>
+      <h2>Edit Column</h2>
+
       <form onSubmit={handleSubmit(onSubmit)}>
         <TextField
           fullWidth
           label="Label"
-          {...register("label")}
           margin="normal"
+          {...register("label")}
         />
+
         <TextField
           fullWidth
           label="Value"
-          {...register("value")}
           margin="normal"
+          {...register("value")}
         />
+
         <FormControlLabel
-          control={
-            <Checkbox
-              {...register("enable")}
-              checked={watch("enable") || false}
-              onChange={(e) => setValue("enable", e.target.checked)}
-            />
-          }
+          control={<Checkbox {...register("enable")} />}
           label="Enable"
         />
-        <Box mt={2} display="flex" gap={2}>
-          <Button type="submit" variant="contained" color="primary">
-            Save
+
+        <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
+          <Button variant="contained" type="submit">
+            SAVE
           </Button>
-          <Button variant="outlined" onClick={() => navigate("/column-show")}>
-            Cancel
+          <Button
+            variant="outlined"
+            onClick={() => navigate("/column-mapping/show")}
+          >
+            CANCEL
           </Button>
         </Box>
       </form>
-    </Paper>
+    </Box>
   );
 }
 
