@@ -1,7 +1,7 @@
 import axios from "axios";
 import api from "../api/api";
 import getAPIMap from "../api/ApiUrls";
-import apiFunction from "../api/apiFunction";
+
 
 // ✅ Fetch all columns
 export async function fetchColumns() {
@@ -29,28 +29,20 @@ export async function addColumn(data) {
 }
 
 // ✅ Update column
-// ✅ column-data.jsx
 
-/// ✅ src/Ty-Mapping/column-data.jsx
-export async function updateColumn(data) {
-  try {
-    const response = await apiFunction({
-      url: "columnMapping", // ✅ static key — do NOT pass id in URL
-      method: "post",        // ✅ as per backend, use POST
-      data: {
-        id: data.id,         // ✅ id sent in body
-        label: data.label,
-        value: data.value,
-        type: data.type,
-        enable: data.enable,
-      },
-    });
-    return response.data;
-  } catch (error) {
-    console.error("❌ Update failed:", error.response?.data || error.message);
-    throw error;
-  }
+export async function fetchColumn(id) {
+  const url = getAPIMap("columnMapping") + `/${id}`;
+  const response = await axios.get(url);
+  return response.data;
 }
+
+// ✅ updateColumn function as per your format
+export async function updateColumn(options) {
+  const url = getAPIMap("columnMapping") + `/${options.id}`;
+  const response = await axios.put(url, options);
+  return response.data;
+}
+
 
 
 // ✅ Delete column
