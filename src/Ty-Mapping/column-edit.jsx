@@ -1,25 +1,29 @@
 // src/Ty-Mapping/column-edit.jsx
 
 import React from "react";
-import {
-  Box,
-  Button,
-  Checkbox,
-  FormControlLabel,
-  TextField,
-} from "@mui/material";
+import { Box, Button } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import getAPIMap from "../api/ApiUrls";
 import apiFunction from "../api/apiFunction";
 
+// Reusable custom components
+import FormInput from "../Components/hookForms/FormInput";
+import FormCheckbox from "../Components/hookForms/FormCheckbox";
+import SubmitButton from "../Components/Buttons/submitButton";
+
 function ColumnEdit() {
   const navigate = useNavigate();
   const { id } = useParams();
   const queryClient = useQueryClient();
 
-  const { register, handleSubmit, reset } = useForm({
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
     defaultValues: {
       label: "",
       value: "",
@@ -64,40 +68,35 @@ function ColumnEdit() {
   if (isError) return <div>Error loading column data.</div>;
 
   return (
-    <Box sx={{ maxWidth: 500, mx: "auto", mt: 8 }}>
-      <h2>Edit Column</h2>
+    <Box className="max-w-xl mx-auto mt-10 bg-white p-6 rounded-2xl shadow-lg">
+      <h2 className="text-2xl font-bold text-gray-800 mb-6">Edit Column</h2>
 
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <TextField
-          fullWidth
-          label="Label"
-          margin="normal"
-          {...register("label")}
-        />
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+        <div>
+          <label htmlFor="label">Label</label>
+          <FormInput name="label" control={control} error={errors.label?.message} />
+        </div>
 
-        <TextField
-          fullWidth
-          label="Value"
-          margin="normal"
-          {...register("value")}
-        />
+        <div>
+          <label htmlFor="value">Value</label>
+          <FormInput name="value" control={control} error={errors.value?.message} />
+        </div>
 
-        <FormControlLabel
-          control={<Checkbox {...register("enable")} />}
-          label="Enable"
-        />
+        <div className="flex items-center gap-2">
+          <FormCheckbox name="enable" control={control} />
+          <label htmlFor="enable" className="text-gray-700">Enable</label>
+        </div>
 
-        <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
-          <Button variant="contained" type="submit">
-            SAVE
-          </Button>
+        <div className="flex gap-4 justify-end">
+          <SubmitButton disabled={mutation.isPending} />
           <Button
             variant="outlined"
+            color="secondary"
             onClick={() => navigate("/column-mapping/show")}
           >
-            CANCEL
+            Cancel
           </Button>
-        </Box>
+        </div>
       </form>
     </Box>
   );
