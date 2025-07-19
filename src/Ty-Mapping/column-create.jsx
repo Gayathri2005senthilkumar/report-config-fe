@@ -13,7 +13,6 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { addColumn } from "./column-data";
 import useQueryGetpi from "@/api/useQueryGetApi";
 import useMutationCustom from "@/api/useMutationCustom";
-import getAPIMap from "@/api/ApiUrls";
 
 const schema = yup.object().shape({
   label: yup.string().required("Label is required"),
@@ -35,7 +34,7 @@ function ColumnCreate() {
   const {
     control,
     handleSubmit,
-    formState: { errors, isDirty },
+    formState: { errors, isDirty,isValid  },
     reset,
   } = useForm({
     defaultValues: {
@@ -142,7 +141,7 @@ function ColumnCreate() {
         </div>
 
         <div className="text-right">
-          <SubmitButton disabled={addMutation.isPending || !isDirty} />
+          <SubmitButton disabled={addMutation.isPending || !isDirty || !isValid } />
         </div>
       </div>
     </form>

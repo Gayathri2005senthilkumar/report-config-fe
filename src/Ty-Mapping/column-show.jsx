@@ -12,38 +12,12 @@ import { TanStackTable } from "@/Table/TanstackTable";
 import { Button, Checkbox } from "@mui/material";
 
 function ColumnShow() {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const [rows, setRows] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 3,
   });
   const columnHelper = createColumnHelper();
-
-  const loadColumns = async () => {
-    try {
-      const res = await fetchColumns();
-      setRows(res); // ✅ this is already correct
-    } catch (err) {
-      setRows([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchUsers = async (pageIndex, pageSize) => {
-    try {
-      const res = await fetchColumWithPagination(pageIndex, pageSize);
-      console.log("Loaded columns:", res);
-      return res;
-    } catch (err) {
-      console.error("Failed to fetch column data:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const navigate = useNavigate();
 
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this column?")) return;
@@ -86,6 +60,7 @@ function ColumnShow() {
               color="primary"
               sx={{
                 cursor: "auto",
+                pointerEvents: 'none'
               }}
             />
           );
@@ -123,15 +98,9 @@ function ColumnShow() {
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["users", pagination.pageIndex, pagination.pageSize],
-    queryFn: () => fetchUsers(pagination.pageIndex, pagination.pageSize),
+    queryFn: () => fetchColumWithPagination(pagination.pageIndex, pagination.pageSize),
     keepPreviousData: true,
   });
-
-  console.log("queyrdata", data);
-
-  useEffect(() => {
-    loadColumns();
-  }, [location.state]);
 
   return (
     <div className="p-6">
@@ -158,11 +127,6 @@ function ColumnShow() {
         onPaginationChange={setPagination}
         isLoading={isLoading}
       />
-      {/* {loading ? (
-        <p className="text-center">Loading...</p>
-      ) : (
-        <ColumnTable rows={rows} onDelete={handleDelete} />
-      )} */}
     </div>
   );
 }
