@@ -16,6 +16,22 @@ export async function fetchColumns() {
   }
 }
 
+export async function fetchColumWithPagination(pageIndex=0,pageSize=3) {
+  try {
+    const url = `${getAPIMap("columnMapping")}?page=${pageIndex+1}&limit=${pageSize}`
+    const response = await axios.get(url);
+    console.log("Fetched columns full response:", response.data);
+    const results = response.data?.data?.results || [];
+    return {
+      data: Array.isArray(results) ? results : [],
+      total: response?.data?.data?.totalResults || 0
+    }
+  } catch (error) {
+    console.error("❌ Fetch failed:", error.response?.data || error.message);
+    throw error;
+  }
+}
+
 
 // ✅ Add new column
 export async function addColumn(data) {
