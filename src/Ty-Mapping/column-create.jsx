@@ -13,6 +13,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { addColumn } from "./column-data";
 import useQueryGetpi from "@/api/useQueryGetApi";
 import useMutationCustom from "@/api/useMutationCustom";
+import OutlineButton from "@/Components/Buttons/OutlineButton";
 
 const schema = yup.object().shape({
   label: yup.string().required("Label is required"),
@@ -140,8 +141,11 @@ function ColumnCreate() {
           </label>
         </div>
 
-        <div className="text-right">
-          <SubmitButton disabled={addMutation.isPending || !isDirty || !isValid } />
+        <div className="flex justify-end gap-4">
+          <OutlineButton text="Cancel" style={{minWidth: '100px'}} onClick={()=>{
+            navigate("/column-type/column-show");
+          }} />
+          <SubmitButton disabled={addMutation.isPending || !isDirty || !isValid } style={{minWidth: '100px'}} />
         </div>
       </div>
     </form>
