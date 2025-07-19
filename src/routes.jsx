@@ -26,8 +26,9 @@ const router = createBrowserRouter([
 
       { path: '/column-types', element: <ColumnTypes /> },
       { path: '/column-type/column-show', element: <ColumnShow /> },
-      { path: '/column-type/column-edit/:id', element: <ColumnEdit /> }, //  keep only this one
-      { path: '/column-type/column-create', element: <ColumnCreate /> },
+      // { path: '/column-type/column-edit/:id', element: <ColumnEdit /> }, //  keep only this one
+      // { path: '/column-type/column-create', element: <ColumnCreate /> },
+      { path: '/column-type/column-form/:id?', element: <ColumnCreate /> },
 
       { path: '/config-type', element: <ConfigType /> },
       { path: '/config-type/config-show', element: <ConfigShow /> },

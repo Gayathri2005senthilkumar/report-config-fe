@@ -20,7 +20,7 @@ function ColumnTable({ rows = [], onDelete }) {
   };
 
   const handleEdit = (row) => {
-    navigate(`/column-type/column-edit/${row.id}`, { state: row });
+    navigate(`/column-type/column-form/${row.id}`, { state: row });
   };
 
   return (
@@ -40,7 +40,7 @@ function ColumnTable({ rows = [], onDelete }) {
           {rows.length > 0 ? (
             rows.map((row, index) => (
               <TableRow key={row.id}>
-                <TableCell>{index + 1}</TableCell>
+                <TableCell>{row.id}</TableCell>
                 <TableCell>{row.label}</TableCell>
                 <TableCell>{row.value}</TableCell>
                 <TableCell>{row.type}</TableCell>
@@ -49,6 +49,10 @@ function ColumnTable({ rows = [], onDelete }) {
                     checked={row.enable}
                     onChange={() => handleToggle(row)}
                     color="primary"
+                    sx={{
+                      "cursor": "auto",
+                      
+                    }}
                   />
                 </TableCell>
                 <TableCell>
