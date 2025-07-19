@@ -9,8 +9,7 @@ import FormSelect from "../Components/hookForms/FormSelect";
 import FormCheckbox from "../Components/hookForms/FormCheckbox";
 import SubmitButton from "../Components/Buttons/submitButton";
 
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { addColumn } from "./column-data";
+import { useQuery } from "@tanstack/react-query";
 import useQueryGetpi from "@/api/useQueryGetApi";
 import useMutationCustom from "@/api/useMutationCustom";
 import OutlineButton from "@/Components/Buttons/OutlineButton";
@@ -53,7 +52,8 @@ function ColumnCreate() {
       alert("✅ Column created successfully!");
       navigate("/column-type/column-show");
     },
-    onError: () => {
+
+    onError: (err) => {
       console.error("❌ Error:", err);
       alert("❌ Failed to create column");
     },
@@ -63,12 +63,13 @@ function ColumnCreate() {
     return "/" + id + "?v1";
   }, [id]);
 
-  const { data, isLoading, isError, error, refetch } = useQuery({
-    queryKey: ["columnMapping", queryString], // Unique key for caching and tracking
-    queryFn: useQueryGetpi,
-    enabled: id !== "create",
-    refetchOnWindowFocus: false,
-  });
+const { data } = useQuery({
+  queryKey: ["columnMapping", queryString],
+  queryFn: useQueryGetpi,
+  enabled: id !== "create",
+  refetchOnWindowFocus: false,
+});
+
 
   useEffect(() => {
     if (id !== "create" && data?.data) {

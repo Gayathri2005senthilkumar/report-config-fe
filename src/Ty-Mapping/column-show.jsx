@@ -1,15 +1,14 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import ColumnTable from "./column-table";
-import {
-  fetchColumns,
-  deleteColumn,
-  fetchColumWithPagination,
-} from "./column-data";
+import React, { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { createColumnHelper } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
 import { TanStackTable } from "@/Table/TanstackTable";
 import { Button, Checkbox } from "@mui/material";
+import {
+  deleteColumn,
+  fetchColumWithPagination,
+} from "./column-data";
+
 
 function ColumnShow() {
   const [pagination, setPagination] = useState({
