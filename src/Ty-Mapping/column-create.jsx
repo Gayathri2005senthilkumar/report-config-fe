@@ -35,7 +35,7 @@ function ColumnCreate() {
   const {
     control,
     handleSubmit,
-    formState: { errors, isDirty,isValid  },
+    formState: { errors, isDirty, isValid },
     reset,
   } = useForm({
     defaultValues: {
@@ -45,6 +45,7 @@ function ColumnCreate() {
       enable: false,
     },
     resolver: yupResolver(schema),
+    mode: "all",
   });
 
   const addMutation = useMutationCustom({
@@ -71,7 +72,7 @@ function ColumnCreate() {
 
   useEffect(() => {
     if (id !== "create" && data?.data) {
-      const clone={...(data?.data|| {})};
+      const clone = { ...(data?.data || {}) };
       delete clone.updatedAt;
       delete clone.createdAt;
       reset(clone);
@@ -88,7 +89,7 @@ function ColumnCreate() {
     } else {
       // const url = `${getAPIMap("columnMapping")}/${id}`;
       addMutation.mutate({
-         url: "columnMapping",
+        url: "columnMapping",
         //  url: url,
         method: "put",
         data: formData,
@@ -142,10 +143,17 @@ function ColumnCreate() {
         </div>
 
         <div className="flex justify-end gap-4">
-          <OutlineButton text="Cancel" style={{minWidth: '100px'}} onClick={()=>{
-            navigate("/column-type/column-show");
-          }} />
-          <SubmitButton disabled={addMutation.isPending || !isDirty || !isValid } style={{minWidth: '100px'}} />
+          <OutlineButton
+            text="Cancel"
+            style={{ minWidth: "100px" }}
+            onClick={() => {
+              navigate("/column-type/column-show");
+            }}
+          />
+          <SubmitButton
+            disabled={addMutation.isPending || !isDirty || !isValid}
+            style={{ minWidth: "100px" }}
+          />
         </div>
       </div>
     </form>
