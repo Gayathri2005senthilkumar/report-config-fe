@@ -14,24 +14,21 @@ import {
   TableContainer,
   Paper,
   TableFooter,
-  TablePagination,
   Pagination,
   Toolbar,
 } from "@mui/material";
 import styled from "@emotion/styled";
+import { tablePaginationClasses } from "@mui/material/TablePagination";
 
 const TablePaginationRoot = styled(TableCell, {
   name: "MuiTablePagination",
   slot: "Root",
-})(
-  ({ theme }) => ({
-    overflow: "auto",
-    // Increase the specificity to override TableCell.
-    "&:last-child": {
-      padding: 0,
-    },
-  })
-);
+})(() => ({
+  overflow: "auto",
+  "&:last-child": {
+    padding: 0,
+  },
+}));
 
 const TablePaginationToolbar = styled(Toolbar, {
   name: "MuiTablePagination",
@@ -40,12 +37,11 @@ const TablePaginationToolbar = styled(Toolbar, {
     [`& .${tablePaginationClasses.actions}`]: styles.actions,
     ...styles.toolbar,
   }),
-})(
-  ({ theme }) => ({
-    minHeight: 52,
-    paddingRight: 2,
-  })
-);
+})(() => ({
+  minHeight: 52,
+  paddingRight: 2,
+}));
+
 const TablePaginationSpacer = styled("div", {
   name: "MuiTablePagination",
   slot: "Spacer",
@@ -58,7 +54,6 @@ export function TanStackTable({
   data,
   pagination,
   pageCount,
-  totalItems,
   isLoading,
   onPaginationChange,
 }) {
@@ -98,6 +93,7 @@ export function TanStackTable({
             </TableRow>
           ))}
         </TableHead>
+
         <TableBody>
           {table.getRowModel().rows.map((row) => (
             <TableRow key={row.id}>
@@ -109,32 +105,12 @@ export function TanStackTable({
             </TableRow>
           ))}
         </TableBody>
-         {/* <TableFooter>
-          <TableRow>
-                    <TablePagination
-              count={totalItems}
-              page={pagination.pageIndex}
-              rowsPerPage={pagination.pageSize}
-              onPageChange={(_, newPage) =>
-                onPaginationChange({ ...pagination, pageIndex: newPage })
-              }
-              onRowsPerPageChange={(e) =>
-                onPaginationChange({
-                  pageIndex: 0,
-                  pageSize: parseInt(e.target.value, 10),
-                })
-              }
-              rowsPerPageOptions={[5, 10, 20]}
-              showFirstButton
-              showLastButton
-            />
-          </TableRow>
-          </TableFooter> */}
+
         <TableFooter>
           <TableRow>
-            <TablePaginationRoot colspan="1000">
+            <TablePaginationRoot colSpan={1000}>
               <TablePaginationToolbar>
-                <TablePaginationSpacer/>
+                <TablePaginationSpacer />
                 <Pagination
                   count={pageCount}
                   page={pagination.pageIndex + 1}
@@ -151,7 +127,6 @@ export function TanStackTable({
             </TablePaginationRoot>
           </TableRow>
         </TableFooter>
-       
       </Table>
     </TableContainer>
   );
