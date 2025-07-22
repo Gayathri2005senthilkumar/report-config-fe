@@ -13,6 +13,8 @@ import { useQuery } from "@tanstack/react-query";
 import useQueryGetpi from "@/api/useQueryGetApi";
 import useMutationCustom from "@/api/useMutationCustom";
 import OutlineButton from "@/Components/Buttons/OutlineButton";
+import getAPIMap from "@/api/ApiUrls";
+
 
 const schema = yup.object().shape({
   label: yup.string().required("Label is required"),
@@ -90,11 +92,11 @@ const { data } = useQuery({
     } else {
       // const url = `${getAPIMap("columnMapping")}/${id}`;
       addMutation.mutate({
-        url: "columnMapping",
-        //  url: url,
+        url: `${getAPIMap("columnMapping")}/${formData.id}`,
         method: "put",
         data: formData,
       });
+
     }
   };
 
