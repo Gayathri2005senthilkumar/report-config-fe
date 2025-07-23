@@ -62,7 +62,7 @@ function ColumnCreate() {
   });
 
   const queryString = useMemo(() => {
-    return "/" + id + "?v1";
+    return "/" + id ;
   }, [id]);
 
 const { data } = useQuery({
