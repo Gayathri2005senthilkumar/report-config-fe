@@ -68,7 +68,7 @@ const { data } = useQuery({
 
   useEffect(() => {
     if (id !== "create" && data?.data) {
-      console.log("Fetched data from API:", data?.data);
+      //console.log("Fetched data from API:", data?.data);
       const clone = { ...(data?.data || {}) };
       delete clone.updatedAt;
       delete clone.createdAt;
