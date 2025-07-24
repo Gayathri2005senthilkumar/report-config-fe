@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import configData from "./config-data";
 
 function ConfigEdit() {
   const { id } = useParams();

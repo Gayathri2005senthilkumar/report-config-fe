@@ -1,75 +1,132 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import ConfigTable from "./config-table";
-import initialData from "./config-data"; // Static mock data
+import { createColumnHelper } from "@tanstack/react-table";
+import { useQuery } from "@tanstack/react-query";
+import { TanStackTable } from "@/Table/TanstackTable";
+import { Button, Checkbox } from "@mui/material";
+import {
+  deleteColumn,
+  fetchColumWithPagination,
+} from "./config-data";
+import SearchBar from "@/components/SearchBar/SearchBar";
 
 function ConfigShow() {
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize: 3,
+  });
+  const [searchTerm, setSearchTerm] = useState(""); 
+  const columnHelper = createColumnHelper();
   const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filter, setFilter] = useState("all");
-  const [data, setData] = useState(initialData); // make it mutable
 
-  // Search + Filter
-  const filteredData = data.filter((row) => {
-    const search = searchTerm.toLowerCase();
-    const matchesSearch =
-      row.title.toLowerCase().includes(search) ||
-      row.name.toLowerCase().includes(search) ||
-      row.normalizedName.toLowerCase().includes(search);
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this column?")) return;
 
-    const matchesFilter =
-      filter === "all" ||
-      (filter === "enabled" && row.enable) ||
-      (filter === "disabled" && !row.enable);
+    try {
+      await deleteColumn(id);
+      refetch();
+    } catch (err) {
+      console.error("Delete failed:", err);
+      alert("Failed to delete column.");
+    }
+  };
 
-    return matchesSearch && matchesFilter;
+  const columns = useMemo(() => [
+    columnHelper.accessor("id", { header: "ID", cell: (info) => info.getValue() }),
+    columnHelper.accessor("title", { header: "Title", cell: (info) => info.getValue() }),
+    columnHelper.accessor("name", { header: "Name", cell: (info) => info.getValue() }),
+    columnHelper.accessor("normalizedName", { header: "normalizedName", cell: (info) => info.getValue() }),
+    columnHelper.accessor("enable", {
+      header: "Enable",
+      cell: (info) => (
+        <Checkbox
+          checked={info.getValue()}
+          color="primary"
+          sx={{ cursor: "auto", pointerEvents: "none" }}
+        />
+      ),
+    }),
+    columnHelper.accessor("actions", {
+      header: "Actions",
+      cell: (info) => {
+        const row = info.row.original;
+        return (
+          <>
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={() => navigate(`/config-type/config-form/${row.id}`, { state: row })}
+              size="small"
+              sx={{ marginRight: 1 }}
+            >
+              Edit
+            </Button>
+            <Button
+              variant="outlined"
+              color="error"
+              onClick={() => handleDelete(row.id)}
+              size="small"
+            >
+              Delete
+            </Button>
+          </>
+        );
+      },
+    }),
+  ], [navigate]);
+
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ["columns", pagination.pageIndex, pagination.pageSize],
+    queryFn: () => fetchColumWithPagination(pagination.pageIndex, pagination.pageSize),
+    keepPreviousData: true,
   });
 
-  //  Deleting the item from table & source
-  const handleDelete = (id) => {
-    setData((prevData) => prevData.filter((row) => row.id !== id));
-  };
+  // ✅ Filtered data with search term
+  const filteredData = useMemo(() => {
+    if (!searchTerm.trim()) return data?.data ?? [];
 
-  const handleEdit = (id) => {
-    navigate(`/config-type/config-edit/${id}`);
-  };
+    const lowerSearch = searchTerm.toLowerCase();
+
+    return (data?.data ?? []).filter((row) =>
+      Object.values(row).some(
+        (val) => typeof val === "string" && val.toLowerCase().includes(lowerSearch)
+      )
+    );
+  }, [data, searchTerm]);
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h2 className="text-xl font-bold mb-4 text-gray-800">Report Config / Show</h2>
-
-      {/* Top Controls */}
-      <div className="flex flex-wrap justify-between items-center gap-4 mb-4">
-        <input
-          type="text"
-          placeholder="Search by title, name, or normalized name"
-          className="border border-gray-300 px-4 py-2 rounded w-full md:w-1/3"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-
-        <div className="flex gap-3">
-          <select
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            className="border border-violet-500 text-violet-600 font-semibold px-4 py-2 rounded hover:bg-violet-100"
-          >
-            <option value="all">Filter</option>
-            <option value="enabled">Enabled</option>
-            <option value="disabled">Disabled</option>
-          </select>
-
-          <button
-            className="border border-violet-500 bg-white text-violet-600 font-semibold px-6 py-2 rounded hover:bg-violet-100"
-            onClick={() => navigate("/config-type/config-create")}
-          >
-            Create New
-          </button>
-        </div>
+    <div className="p-6">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-semibold">Report Config</h2>
+        <button
+          className="bg-violet-600 text-white px-4 py-2 rounded hover:bg-violet-700"
+          onClick={() =>
+            navigate("/config-type/config-form/create", { state: { from: "show" } })
+          }
+        >
+          + Create New
+        </button>
       </div>
 
-      {/* Pass editable data to table */}
-      <ConfigTable data={filteredData} onEdit={handleEdit} onDelete={handleDelete} />
+      {/* ✅ Search Bar */}
+      <div className="mb-4">
+        <SearchBar
+          value={searchTerm}
+          onChange={setSearchTerm}
+          placeholder="Search Columns"
+          width={400}
+        />
+      </div>
+
+      <TanStackTable
+        columns={columns}
+        data={filteredData}
+        totalItems={data?.total ?? 0}
+        pageCount={Math.ceil((data?.total ?? 0) / pagination.pageSize)}
+        pagination={pagination}
+        onPaginationChange={setPagination}
+        isLoading={isLoading}
+      />
     </div>
   );
 }

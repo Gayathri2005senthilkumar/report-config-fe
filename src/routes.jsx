@@ -32,8 +32,9 @@ const router = createBrowserRouter([
 
       { path: '/config-type', element: <ConfigType /> },
       { path: '/config-type/config-show', element: <ConfigShow /> },
-      { path: '/config-type/config-edit/:id', element: <ConfigEdit /> },
-      { path: '/config-type/config-create', element: <ConfigCreate /> },
+      { path: '/config-type/config-form/:id?', element: <ConfigCreate/> },
+     // { path: '/config-type/config-edit/:id', element: <ConfigEdit /> },
+    //  { path: '/config-type/config-create', element: <ConfigCreate /> },
     ]
   }
 ]);

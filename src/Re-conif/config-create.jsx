@@ -1,90 +1,155 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import configData from "./config-data";
+import React, { useEffect, useMemo } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+
+import FormInput from "../Components/hookForms/FormInput";
+import FormSelect from "../Components/hookForms/FormSelect";
+import FormCheckbox from "../Components/hookForms/FormCheckbox";
+import SubmitButton from "../Components/Buttons/submitButton";
+
+import { useQuery } from "@tanstack/react-query";
+import useQueryGetpi from "@/api/useQueryGetApi";
+import useMutationCustom from "@/api/useMutationCustom";
+import OutlineButton from "@/Components/Buttons/OutlineButton";
+import getAPIMap from "@/api/ApiUrls";
+
+
+const schema = yup.object().shape({
+  title: yup.string().required("Title is required"),
+  name: yup.string().required("Name is required"),
+  normalizedName: yup.string().required("Normalized Name is required"),
+  enable: yup.boolean(),
+});
 
 function ConfigCreate() {
   const navigate = useNavigate();
-  const [form, setForm] = useState({
-    title: "",
-    name: "",
-    normalizedName: "",
-    enable: false,
+  const { id } = useParams();
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isDirty, isValid },
+    reset,
+  } = useForm({
+    defaultValues: {
+      title: "",
+      name: "",
+      normalizedName: "",
+      enable: false,
+    },
+    resolver: yupResolver(schema),
+    mode: "all",
   });
 
-  // Auto-generate next ID
-  const generateId = () => {
-    const ids = configData.map((item) => item.id);
-    return Math.max(...ids, 0) + 1;
-  };
+  const addMutation = useMutationCustom({
+    onSuccess: () => {
+      alert("Column created successfully!");
+      navigate("/config-type/config-show");
+    },
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
+    onError: (err) => {
+      console.error("❌ Error:", err);
+      alert("❌ Failed to create column");
+    },
+  });
 
-  const handleCheckbox = (e) => {
-    setForm((prev) => ({ ...prev, enable: e.target.checked }));
-  };
+  const queryString = useMemo(() => {
+    return "/" + id ;
+  }, [id]);
 
-  const handleSave = () => {
-    const newItem = { id: generateId(), ...form };
-    configData.push(newItem); // Save to shared data
-    navigate("/config-type/config-show");
-  };
+const { data } = useQuery({
+  queryKey: ["config", queryString],
+  queryFn: useQueryGetpi,
+  enabled: id !== "create",
+  refetchOnWindowFocus: false,
+});
+
+
+  useEffect(() => {
+    if (id !== "create" && data?.data) {
+      const clone = { ...(data?.data || {}) };
+      delete clone.updatedAt;
+      delete clone.createdAt;
+      reset(clone);
+    }
+  }, [data]);
+  
+ const onSubmit = (formData) => {
+  if (id === "create") {
+    addMutation.mutate({
+      url: "config",
+      method: "post",
+      data: formData,
+    });
+  } else {
+    addMutation.mutate({
+      url: `${getAPIMap("config")}/${id}`,
+      method: "put",
+      data: formData,
+    });
+  }
+};
 
   return (
-    <div className="max-w-xl mx-auto mt-10 p-6 bg-white shadow rounded">
-      <h2 className="text-xl font-bold mb-4">Create New Config</h2>
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="max-w-xl mx-auto p-6 bg-white rounded-2xl shadow-lg mt-10"
+    >
+      <h2 className="text-2xl font-bold text-gray-800 mb-6">
+        {id === "create" ? "Create New Column" : "Edit New Column"}
+      </h2>
 
-      <div className="mb-4">
-        <label className="block mb-1">Title</label>
-        <input
-          name="title"
-          value={form.title}
-          onChange={handleChange}
-          className="w-full border px-3 py-2 rounded"
-        />
-      </div>
-
-      <div className="mb-4">
-        <label className="block mb-1">Name</label>
-        <input
-          name="name"
-          value={form.name}
-          onChange={handleChange}
-          className="w-full border px-3 py-2 rounded"
-        />
-      </div>
-
-      <div className="mb-4">
-        <label className="block mb-1">Normalized Name</label>
-        <input
-          name="normalizedName"
-          value={form.normalizedName}
-          onChange={handleChange}
-          className="w-full border px-3 py-2 rounded"
-        />
-      </div>
-
-      <div className="mb-6">
-        <label className="flex items-center">
-          <input
-            type="checkbox"
-            checked={form.enable}
-            onChange={handleCheckbox}
-            className="mr-2"
+      <div className="space-y-5">
+        <div>
+          <label htmlFor="title">Title</label>
+          <FormInput
+            name="title"
+            control={control}
+            error={errors.title?.message}
           />
-          Enable
-        </label>
-      </div>
+        </div>
+        <div>
+          <label htmlFor="name">Name</label>
+          <FormInput
+            name="name"
+            control={control}
+            error={errors.name?.message}
+          />
+        </div>
 
-      <button
-        onClick={handleSave}
-        className="bg-violet-600 text-white px-6 py-2 rounded hover:bg-violet-700"
-      >
-        Save
-      </button>
-    </div>
+        <div>
+          <label htmlFor="normalizedName">Normalized Name</label>
+          <FormInput
+            name="normalizedName"
+            control={control}
+            error={errors.normalizedName?.message}
+          />
+        </div>
+
+
+        <div className="flex items-center gap-2">
+          <FormCheckbox name="enable" control={control} />
+          <label htmlFor="enable" className="text-gray-700">
+            Enable
+          </label>
+        </div>
+
+        <div className="flex justify-end gap-4">
+          <OutlineButton
+            text="Cancel"
+            style={{ minWidth: "100px" }}
+            onClick={() => {
+              navigate("/config-type/config-show");
+            }}
+          />
+          <SubmitButton
+            disabled={addMutation.isPending || !isDirty || !isValid}
+            style={{ minWidth: "100px" }}
+          />
+        </div>
+      </div>
+    </form>
   );
 }
 
