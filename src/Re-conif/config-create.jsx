@@ -84,11 +84,11 @@ const { data } = useQuery({
       data: formData,
     });
   } else {
-    addMutation.mutate({
-      url: `${getAPIMap("config")}/${id}`,
-      method: "put",
-      data: formData,
-    });
+     addMutation.mutate({
+        url: `${getAPIMap("config")}/${formData.id}`,
+        method: "put",
+        data: formData,
+      });
   }
 };
 

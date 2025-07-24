@@ -1,3 +1,4 @@
+import axios from "axios";
 import api from "../api/api";
 import getAPIMap from "../api/ApiUrls";
 
@@ -42,28 +43,19 @@ export async function addColumn(data) {
   }
 }
 
-// ✅ Fetch single config by ID
+// ✅ Update column
 export async function fetchColumn(id) {
-  try {
-    const url = `${getAPIMap("config")}/${id}`;
-    const response = await api.get(url);
-    return response.data?.data;
-  } catch (error) {
-    console.error("❌ Fetch single failed:", error.response?.data || error.message);
-    throw error;
-  }
+  const url = getAPIMap("config") + `/${id}`;
+  const response = await axios.get(url);
+  return response.data?.data; 
 }
 
-// ✅ Update existing config
+
+// ✅ updateColumn function as per your format
 export async function updateColumn(options) {
-  try {
-    const url = `${getAPIMap("config")}/${options.id}`;
-    const response = await api.put(url, options);
-    return response.data;
-  } catch (error) {
-    console.error("❌ Update failed:", error.response?.data || error.message);
-    throw error;
-  }
+  const url = getAPIMap("config") + `/${options.id}`;
+  const response = await axios.put(url, options);
+  return response.data;
 }
 
 // ✅ Delete config
