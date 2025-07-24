@@ -35,7 +35,7 @@ function ConfigShow() {
     columnHelper.accessor("id", { header: "ID", cell: (info) => info.getValue() }),
     columnHelper.accessor("title", { header: "Title", cell: (info) => info.getValue() }),
     columnHelper.accessor("name", { header: "Name", cell: (info) => info.getValue() }),
-    columnHelper.accessor("normalizedName", { header: "normalizedName", cell: (info) => info.getValue() }),
+    columnHelper.accessor("normalized_name", { header: "Normalized Name", cell: (info) => info.getValue() }),
     columnHelper.accessor("enable", {
       header: "Enable",
       cell: (info) => (

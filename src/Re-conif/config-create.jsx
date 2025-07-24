@@ -19,7 +19,7 @@ import getAPIMap from "@/api/ApiUrls";
 const schema = yup.object().shape({
   title: yup.string().required("Title is required"),
   name: yup.string().required("Name is required"),
-  normalizedName: yup.string().required("Normalized Name is required"),
+  normalized_name: yup.string().required("Normalized Name is required"),
   enable: yup.boolean(),
 });
 
@@ -35,7 +35,7 @@ function ConfigCreate() {
     defaultValues: {
       title: "",
       name: "",
-      normalizedName: "",
+      normalized_name: "",
       enable: false,
     },
     resolver: yupResolver(schema),
@@ -68,6 +68,7 @@ const { data } = useQuery({
 
   useEffect(() => {
     if (id !== "create" && data?.data) {
+      console.log("Fetched data from API:", data?.data);
       const clone = { ...(data?.data || {}) };
       delete clone.updatedAt;
       delete clone.createdAt;
@@ -119,11 +120,11 @@ const { data } = useQuery({
         </div>
 
         <div>
-          <label htmlFor="normalizedName">Normalized Name</label>
+          <label htmlFor="normalized_name">Normalized Name</label>
           <FormInput
-            name="normalizedName"
+            name="normalized_name"
             control={control}
-            error={errors.normalizedName?.message}
+            error={errors.normalized_name?.message}
           />
         </div>
 
