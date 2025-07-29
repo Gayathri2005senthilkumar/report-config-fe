@@ -14,6 +14,7 @@ import ConfigShow from './Re-conif/config-show';
 import ConfigEdit from './Re-conif/config-edit';
 import ConfigCreate from './Re-conif/config-create';
 import ColumnView from './Ty-Mapping/column-view';
+import ConfigView from './Re-conif/config-view';
 
 const router = createBrowserRouter([
   {
@@ -36,6 +37,7 @@ const router = createBrowserRouter([
       { path: '/config-type', element: <ConfigType /> },
       { path: '/config-type/config-show', element: <ConfigShow /> },
       { path: '/config-type/config-form/:id?', element: <ConfigCreate/> },
+      { path: "/config-type/config-view/:id", element: <ConfigView/> },
      // { path: '/config-type/config-edit/:id', element: <ConfigEdit /> },
     //  { path: '/config-type/config-create', element: <ConfigCreate /> },
     ]

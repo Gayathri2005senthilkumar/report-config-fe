@@ -55,7 +55,10 @@ function ConfigShow() {
             <Button
               variant="outlined"
               color="primary"
-              onClick={() => navigate(`/config-type/config-form/${row.id}`, { state: row })}
+              onClick={(e) => {
+                e.stopPropagation(); // prevent row click
+                navigate(`/config-type/config-form/${row.id}`, { state: row });
+              }}
               size="small"
               sx={{ marginRight: 1 }}
             >
@@ -64,7 +67,10 @@ function ConfigShow() {
             <Button
               variant="outlined"
               color="error"
-              onClick={() => handleDelete(row.id)}
+              onClick={(e) => {
+                e.stopPropagation(); // prevent row click
+                handleDelete(row.id);
+              }}
               size="small"
             >
               Delete
@@ -81,7 +87,6 @@ function ConfigShow() {
     keepPreviousData: true,
   });
 
-  // ✅ Filtered data with search term
   const filteredData = useMemo(() => {
     if (!searchTerm.trim()) return data?.data ?? [];
 
@@ -108,16 +113,16 @@ function ConfigShow() {
         </button>
       </div>
 
-      {/* ✅ Search Bar */}
       <div className="mb-4">
         <SearchBar
           value={searchTerm}
           onChange={setSearchTerm}
-          placeholder="Search Columns"
+          placeholder="Search Configs"
           width={400}
         />
       </div>
 
+      {/* ✅ TanStackTable with onRowClick */}
       <TanStackTable
         columns={columns}
         data={filteredData}
@@ -126,6 +131,9 @@ function ConfigShow() {
         pagination={pagination}
         onPaginationChange={setPagination}
         isLoading={isLoading}
+        onRowClick={(row) => {
+          navigate(`/config-type/config-view/${row.id}`, { state: row });
+        }}
       />
     </div>
   );

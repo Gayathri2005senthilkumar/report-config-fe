@@ -25,9 +25,9 @@ function Sidebar() {
         { label: "Column Mappings", icon: <Map />, path: "/column-types" },
       ],
     },
-    { label: "Response Fields", icon: <MessageSquare />, path: "/response-fields" },
-    { label: "Search Fields", icon: <Search />, path: "/search-fields" },
-    { label: "Filter Fields", icon: <Filter />, path: "/filter-fields" },
+  //  { label: "Response Fields", icon: <MessageSquare />, path: "/response-fields" },
+    //{ label: "Search Fields", icon: <Search />, path: "/search-fields" },
+    //{ label: "Filter Fields", icon: <Filter />, path: "/filter-fields" },
   ];
 
   return (

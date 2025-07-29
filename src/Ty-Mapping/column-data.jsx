@@ -60,8 +60,6 @@ export async function updateColumn(options) {
   return response.data;
 }
 
-
-
 // ✅ Delete column
 export async function deleteColumn(id) {
   try {
