@@ -32,7 +32,6 @@ function ColumnView() {
       <Button
         variant="contained"
         color="primary"
-        startIcon={<ArrowBackIcon />}
         onClick={() => navigate(-1)}
         sx={{ mb: 3 }}
       >
