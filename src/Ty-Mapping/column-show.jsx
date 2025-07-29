@@ -15,7 +15,7 @@ function ColumnShow() {
     pageIndex: 0,
     pageSize: 3,
   });
-  const [searchTerm, setSearchTerm] = useState(""); 
+  const [searchTerm, setSearchTerm] = useState("");
   const columnHelper = createColumnHelper();
   const navigate = useNavigate();
 
@@ -32,10 +32,22 @@ function ColumnShow() {
   };
 
   const columns = useMemo(() => [
-    columnHelper.accessor("id", { header: "ID", cell: (info) => info.getValue() }),
-    columnHelper.accessor("label", { header: "Label", cell: (info) => info.getValue() }),
-    columnHelper.accessor("value", { header: "Value", cell: (info) => info.getValue() }),
-    columnHelper.accessor("type", { header: "Type", cell: (info) => info.getValue() }),
+    columnHelper.accessor("id", {
+      header: "ID",
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor("label", {
+      header: "Label",
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor("value", {
+      header: "Value",
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor("type", {
+      header: "Type",
+      cell: (info) => info.getValue(),
+    }),
     columnHelper.accessor("enable", {
       header: "Enable",
       cell: (info) => (
@@ -46,7 +58,8 @@ function ColumnShow() {
         />
       ),
     }),
-    columnHelper.accessor("actions", {
+    columnHelper.display({
+      id: "actions",
       header: "Actions",
       cell: (info) => {
         const row = info.row.original;
@@ -55,7 +68,10 @@ function ColumnShow() {
             <Button
               variant="outlined"
               color="primary"
-              onClick={() => navigate(`/column-type/column-form/${row.id}`, { state: row })}
+              onClick={(e) => {
+                e.stopPropagation(); // Prevent row click
+                navigate(`/column-type/column-form/${row.id}`, { state: row });
+              }}
               size="small"
               sx={{ marginRight: 1 }}
             >
@@ -64,7 +80,10 @@ function ColumnShow() {
             <Button
               variant="outlined"
               color="error"
-              onClick={() => handleDelete(row.id)}
+              onClick={(e) => {
+                e.stopPropagation(); // Prevent row click
+                handleDelete(row.id);
+              }}
               size="small"
             >
               Delete
@@ -81,7 +100,6 @@ function ColumnShow() {
     keepPreviousData: true,
   });
 
-  // ✅ Filtered data with search term
   const filteredData = useMemo(() => {
     if (!searchTerm.trim()) return data?.data ?? [];
 
@@ -118,6 +136,7 @@ function ColumnShow() {
         />
       </div>
 
+      {/* ✅ Table with Row Click */}
       <TanStackTable
         columns={columns}
         data={filteredData}
@@ -126,6 +145,9 @@ function ColumnShow() {
         pagination={pagination}
         onPaginationChange={setPagination}
         isLoading={isLoading}
+        onRowClick={(row) =>
+          navigate(`/column-type/view/${row.id}`, { state: row })
+        }
       />
     </div>
   );
