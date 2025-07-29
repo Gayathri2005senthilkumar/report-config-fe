@@ -44,7 +44,13 @@ export function TanStackTable({
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
-                <TableCell key={header.id}>
+                <TableCell
+                  key={header.id}
+                  sx={{
+                    bgcolor: "#f0f0f0", // light gray background
+                    fontWeight: "bold", // optional: make text bold
+                  }}
+                >
                   {header.isPlaceholder
                     ? null
                     : flexRender(
