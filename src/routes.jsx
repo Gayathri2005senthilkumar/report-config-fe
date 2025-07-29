@@ -13,6 +13,7 @@ import ConfigType from './Re-conif/config-type';
 import ConfigShow from './Re-conif/config-show';
 import ConfigEdit from './Re-conif/config-edit';
 import ConfigCreate from './Re-conif/config-create';
+import ColumnView from './Ty-Mapping/column-view';
 
 const router = createBrowserRouter([
   {
@@ -29,6 +30,8 @@ const router = createBrowserRouter([
       // { path: '/column-type/column-edit/:id', element: <ColumnEdit /> }, //  keep only this one
       // { path: '/column-type/column-create', element: <ColumnCreate /> },
       { path: '/column-type/column-form/:id?', element: <ColumnCreate /> },
+      { path: '/column-type/view/:id', element: <ColumnView /> },
+
 
       { path: '/config-type', element: <ConfigType /> },
       { path: '/config-type/config-show', element: <ConfigShow /> },
