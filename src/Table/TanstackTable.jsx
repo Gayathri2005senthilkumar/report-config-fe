@@ -2,7 +2,6 @@ import React from "react";
 import {
   useReactTable,
   getCoreRowModel,
-  getPaginationRowModel,
   flexRender,
 } from "@tanstack/react-table";
 import {
@@ -12,50 +11,19 @@ import {
   TableHead,
   TableRow,
   TableContainer,
-  Paper,
-  TableFooter,
-  Pagination,
-  Toolbar,
+  TablePagination,
+  CircularProgress,
 } from "@mui/material";
-import styled from "@emotion/styled";
-import { tablePaginationClasses } from "@mui/material/TablePagination";
-
-const TablePaginationRoot = styled(TableCell, {
-  name: "MuiTablePagination",
-  slot: "Root",
-})(() => ({
-  overflow: "auto",
-  "&:last-child": {
-    padding: 0,
-  },
-}));
-
-const TablePaginationToolbar = styled(Toolbar, {
-  name: "MuiTablePagination",
-  slot: "Toolbar",
-  overridesResolver: (props, styles) => ({
-    [`& .${tablePaginationClasses.actions}`]: styles.actions,
-    ...styles.toolbar,
-  }),
-})(() => ({
-  minHeight: 52,
-  paddingRight: 2,
-}));
-
-const TablePaginationSpacer = styled("div", {
-  name: "MuiTablePagination",
-  slot: "Spacer",
-})({
-  flex: "1 1 auto",
-});
 
 export function TanStackTable({
   columns,
   data,
   pagination,
+  onPaginationChange,
   pageCount,
   isLoading,
-  onPaginationChange,
+  totalItems,
+  onRowClick, // ✅ Accept row click handler
 }) {
   const table = useReactTable({
     data,
@@ -65,29 +33,24 @@ export function TanStackTable({
       pagination,
     },
     manualPagination: true,
-    onPaginationChange,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
+    onPaginationChange,
   });
 
-  if (isLoading) return <div>Loading...</div>;
-
   return (
-    <TableContainer component={Paper}>
+    <TableContainer>
       <Table>
-        <TableHead sx={{ backgroundColor: "#f0f0f0" }}>
+        <TableHead>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
                 <TableCell key={header.id}>
-                  <strong>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                  </strong>
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
                 </TableCell>
               ))}
             </TableRow>
@@ -95,39 +58,55 @@ export function TanStackTable({
         </TableHead>
 
         <TableBody>
-          {table.getRowModel().rows.map((row) => (
-            <TableRow key={row.id}>
-              {row.getVisibleCells().map((cell) => (
-                <TableCell key={cell.id}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </TableCell>
-              ))}
+          {isLoading ? (
+            <TableRow>
+              <TableCell colSpan={columns.length} align="center">
+                <CircularProgress size={24} />
+              </TableCell>
             </TableRow>
-          ))}
+          ) : table.getRowModel().rows.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={columns.length} align="center">
+                No data available
+              </TableCell>
+            </TableRow>
+          ) : (
+            table.getRowModel().rows.map((row) => (
+              <TableRow
+                key={row.id}
+                hover
+                sx={{ cursor: onRowClick ? "pointer" : "default" }}
+                onClick={() => onRowClick?.(row.original)} // ✅ Full row data
+              >
+                {row.getVisibleCells().map((cell) => (
+                  <TableCell key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))
+          )}
         </TableBody>
-
-        <TableFooter>
-          <TableRow>
-            <TablePaginationRoot colSpan={1000}>
-              <TablePaginationToolbar>
-                <TablePaginationSpacer />
-                <Pagination
-                  count={pageCount}
-                  page={pagination.pageIndex + 1}
-                  onChange={(_, page) =>
-                    onPaginationChange({ ...pagination, pageIndex: page - 1 })
-                  }
-                  color="primary"
-                  shape="rounded"
-                  variant="outlined"
-                  showFirstButton
-                  showLastButton
-                />
-              </TablePaginationToolbar>
-            </TablePaginationRoot>
-          </TableRow>
-        </TableFooter>
       </Table>
+
+      {/* ✅ Pagination */}
+      <TablePagination
+        component="div"
+        count={totalItems}
+        page={pagination.pageIndex}
+        onPageChange={(e, newPage) =>
+          onPaginationChange({ ...pagination, pageIndex: newPage })
+        }
+        rowsPerPage={pagination.pageSize}
+        onRowsPerPageChange={(e) =>
+          onPaginationChange({
+            ...pagination,
+            pageSize: parseInt(e.target.value, 10),
+            pageIndex: 0,
+          })
+        }
+        rowsPerPageOptions={[3, 5, 10, 25, 50]}
+      />
     </TableContainer>
   );
 }
