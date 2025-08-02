@@ -1,6 +1,6 @@
 // src/Config/config-view.jsx
-import React from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import React, { useEffect, useMemo } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   Card,
   CardContent,
@@ -9,13 +9,38 @@ import {
   Divider,
   Box,
 } from "@mui/material";
+import { useQuery } from "@tanstack/react-query";
+import useQueryGetpi from "@/api/useQueryGetApi";
 
 function ConfigView() {
   const location = useLocation();
   const navigate = useNavigate();
-  const row = location.state;
+  const { id } = useParams();
 
-  if (!row) {
+   const { data } = useQuery({
+      queryKey: ["config", `/${id}`],
+      queryFn: useQueryGetpi,
+      refetchOnWindowFocus: false,
+    });
+
+    /** Fetch columnMapping data */
+  const { data: columnData } = useQuery({
+    queryKey: ["columnMapping"],
+    queryFn: () => useQueryGetpi({ queryKey: ["columnMapping", ""] }),
+    refetchOnWindowFocus: false,
+  });
+
+  const responsefields =useMemo(()=>{
+    if(data?.data) {
+      const idArr = data?.data.ResponseFields.map((item)=>item.column_mapping)
+      const filterData = columnData?.data?.results?.filter((item)=>idArr.includes(item.id)).map((item)=>item.label);
+      const responsefields =filterData?.join(', ');
+      return responsefields;
+    }
+  },[columnData, data])
+
+
+  if (!data?.data) {
     return <div className="p-6 text-center text-gray-500">No data available</div>;
   }
 
@@ -41,20 +66,24 @@ function ConfigView() {
           <Divider sx={{ mb: 2 }} />
 
           <Box mb={1}>
-            <Typography variant="body1"><strong>ID:</strong> {row.id}</Typography>
+            <Typography variant="body1"><strong>ID:</strong> {data?.data.id}</Typography>
           </Box>
           <Box mb={1}>
-            <Typography variant="body1"><strong>Title:</strong> {row.title}</Typography>
+            <Typography variant="body1"><strong>Title:</strong> {data?.data.title}</Typography>
           </Box>
           <Box mb={1}>
-            <Typography variant="body1"><strong>Name:</strong> {row.name}</Typography>
+            <Typography variant="body1"><strong>Name:</strong> {data?.data.name}</Typography>
           </Box>
           <Box mb={1}>
-            <Typography variant="body1"><strong>Normalized Name:</strong> {row.normalized_name}</Typography>
+            <Typography variant="body1"><strong>Normalized Name:</strong> {data?.data.normalized_name}</Typography>
           </Box>
           <Box mb={1}>
-            <Typography variant="body1"><strong>Enabled:</strong> {row.enable ? "Yes" : "No"}</Typography>
+            <Typography variant="body1"><strong>Enabled:</strong> {data?.data.enable ? "Yes" : "No"}</Typography>
           </Box>
+
+           {responsefields && <Box mb={1}>
+            <Typography variant="body1"><strong>Response Fields:</strong> {responsefields}</Typography>
+          </Box>}
         </CardContent>
       </Card>
     </div>

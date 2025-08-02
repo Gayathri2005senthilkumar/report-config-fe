@@ -41,6 +41,7 @@ function ConfigCreate() {
     handleSubmit,
     formState: { errors, isDirty, isValid },
     reset,
+    watch
   } = useForm({
     defaultValues: {
       title: "",
@@ -52,6 +53,9 @@ function ConfigCreate() {
     resolver: yupResolver(schema),
     mode: "all",
   });
+
+  const watchall=watch();
+  console.log('watchall', watchall)
 
   const addMutation = useMutationCustom({
     onSuccess: () => {
@@ -90,11 +94,10 @@ function ConfigCreate() {
   useEffect(() => {
     if (id !== "create" && data?.data) {
       const clone = { ...(data?.data || {}) };
-
-      // Convert responseFields from objects [{id:62}] to array of IDs [62]
-      if (Array.isArray(clone.responseFields)) {
-        clone.responseFields = clone.responseFields.map((item) =>
-          typeof item === "object" ? item.id : item
+      // debugger;
+      if (Array.isArray(clone.ResponseFields)) {
+        clone.responseFields = clone.ResponseFields.map((item) =>
+          typeof item === "object" ? item.column_mapping   : item
         );
       } else {
         clone.responseFields = [];
